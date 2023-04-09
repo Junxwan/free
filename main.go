@@ -17,7 +17,7 @@ func main() {
 	path := "E:\\我的雲端硬碟\\金融\\data"
 	now := time.Now()
 
-	dateText := canvas.NewText("DownLoad OP:", color.White)
+	dateText := canvas.NewText("DownLoad OP Chips:", color.White)
 	dateText.TextSize = 20
 
 	dateContent := container.New(layout.NewHBoxLayout(), dateText, fwidget.NewDownLoadOPChipsDatePicker(path, now, win).Button)
