@@ -14,17 +14,15 @@ import (
 func main() {
 	a := app.New()
 	win := a.NewWindow("期權")
+	path := "E:\\我的雲端硬碟\\金融\\data"
+	now := time.Now()
 
-	dateText := canvas.NewText("Date:", color.White)
+	dateText := canvas.NewText("DownLoad OP:", color.White)
 	dateText.TextSize = 20
 
-	datePicker := fwidget.NewDatePicker(time.Now(), win)
-	dateContent := container.New(layout.NewHBoxLayout(), dateText, datePicker.Button)
-	downloadOPBtn := fwidget.NewDownLoadOPChipsButton(datePicker, win)
+	dateContent := container.New(layout.NewHBoxLayout(), dateText, fwidget.NewDownLoadOPChipsDatePicker(path, now, win).Button)
 
-	tidyContent := container.New(layout.NewHBoxLayout(), downloadOPBtn)
-
-	win.SetContent(container.New(layout.NewVBoxLayout(), dateContent, tidyContent))
+	win.SetContent(container.New(layout.NewVBoxLayout(), dateContent))
 
 	win.Resize(fyne.NewSize(720, 480))
 	win.ShowAndRun()

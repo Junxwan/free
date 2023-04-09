@@ -14,6 +14,10 @@ type DatePicker struct {
 }
 
 func NewDatePicker(now time.Time, win fyne.Window) *DatePicker {
+	return NewDatePickerOnSelected(now, win, nil)
+}
+
+func NewDatePickerOnSelected(now time.Time, win fyne.Window, onSelected func(selected time.Time)) *DatePicker {
 	datePicker := &DatePicker{
 		T:      &now,
 		Button: widget.NewButton(now.Format("2006-01-02"), nil),
@@ -23,6 +27,10 @@ func NewDatePicker(now time.Time, win fyne.Window) *DatePicker {
 		datePicker.T = &t2
 		datePicker.Button.Text = t2.Format("2006-01-02")
 		datePicker.Button.Refresh()
+
+		if onSelected != nil {
+			onSelected(t2)
+		}
 	})
 
 	datePicker.Button.OnTapped = func() {
