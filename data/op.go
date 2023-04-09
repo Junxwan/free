@@ -12,19 +12,17 @@ import (
 	"time"
 )
 
+// 下載期交所OP未平倉資料
 func DownLoadOPChips(time time.Time, path string) error {
-	path = fmt.Sprintf("%s/%s.csv",
-		filepath.Join(path, "op", "day"),
-		time.Format("2006-01-02"),
-	)
+	f := filepath.Join(path, file.OpRawChipsPathByDay(time))
 
-	if !file.IsExist(path) {
+	if !file.IsExist(f) {
 		body, err := downLoadOPChips(time)
 		if err != nil {
 			return fmt.Errorf("downLoadOPChips error: %w", err)
 		}
 
-		if err := saveOPRawChips(body, path); err != nil {
+		if err := saveOPRawChips(body, f); err != nil {
 			return fmt.Errorf("saveOPRawChips error: %w", err)
 		}
 	}
