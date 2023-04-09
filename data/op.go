@@ -13,21 +13,21 @@ import (
 )
 
 // 下載期交所OP未平倉資料
-func DownLoadOPChips(time time.Time, path string) error {
-	f := filepath.Join(path, file.OpRawChipsPathByDay(time))
+func DownLoadOPChips(time time.Time, outPath string) (string, error) {
+	f := filepath.Join(outPath, file.OpRawChipsPathByDay(time))
 
 	if !file.IsExist(f) {
 		body, err := downLoadOPChips(time)
 		if err != nil {
-			return fmt.Errorf("downLoadOPChips error: %w", err)
+			return "", fmt.Errorf("downLoadOPChips error: %w", err)
 		}
 
 		if err := saveOPRawChips(body, f); err != nil {
-			return fmt.Errorf("saveOPRawChips error: %w", err)
+			return "", fmt.Errorf("saveOPRawChips error: %w", err)
 		}
 	}
 
-	return nil
+	return f, nil
 }
 
 func saveOPRawChips(body []byte, path string) error {

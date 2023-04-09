@@ -21,3 +21,14 @@ func OpRawChipsPathByDay(time time.Time) string {
 		time.Format("2006-01-02"),
 	)
 }
+
+func OpChipsDirPath(name string) string {
+	return filepath.Join("op", "chips", name)
+}
+
+func OpChipsPath(time time.Time, dirName string) string {
+	return fmt.Sprintf("%s/%s.csv",
+		OpChipsDirPath(dirName),
+		time.Format("2006-01-02"),
+	)
+}
