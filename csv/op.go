@@ -76,7 +76,7 @@ func ToChipsCsv(filePath, outPath string) error {
 			"P":     series.Int,
 		}))
 
-		dir := filepath.Join(outPath, OpChipsDirPath(period))
+		dir := filepath.Join(outPath, GetOpChipsPathByPeriod(period))
 
 		if err := saveCsv(dir, now, resultDf); err != nil {
 			return fmt.Errorf("saveFile error: %w", err)

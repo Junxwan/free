@@ -2,7 +2,6 @@ package csv
 
 import (
 	"fmt"
-	file "github.com/Junxwan/free/lib"
 	"github.com/go-gota/gota/dataframe"
 	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
@@ -28,7 +27,7 @@ func saveFile(path string, df dataframe.DataFrame) error {
 }
 
 func saveCsv(dir string, time time.Time, df dataframe.DataFrame) error {
-	if !file.IsExist(dir) {
+	if !IsExist(dir) {
 		if err := os.Mkdir(dir, 0750); err != nil {
 			return fmt.Errorf("mkdir path: %s error: %w", dir, err)
 		}
