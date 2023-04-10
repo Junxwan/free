@@ -76,14 +76,53 @@ func ToChipsCsv(filePath, outPath string) error {
 			"P":     series.Int,
 		}))
 
-		dir := filepath.Join(outPath, GetOpChipsPathByPeriod(period))
-
-		if err := saveCsv(dir, now, resultDf); err != nil {
+		if err := saveCsv(GetOpChipsPathByPeriod(period), now, resultDf); err != nil {
 			return fmt.Errorf("saveFile error: %w", err)
 		}
 	}
 
 	return nil
+}
+
+func ReadOPChipsByPeriod(period, path string) (map[string]*dataframe.DataFrame, error) {
+	dirPath := filepath.Join(path, period)
+	fs, err := os.ReadDir(dirPath)
+	if err != nil {
+		return nil, fmt.Errorf("os.ReadDir error: %w", err)
+	}
+
+	sort.Slice(fs, func(i, j int) bool {
+		return fs[i].Name() < fs[j].Name()
+	})
+
+	dfs := make(map[string]*dataframe.DataFrame)
+	for _, f := range fs {
+		name := strings.Split(f.Name(), ".")[0]
+		csv, err := readCsv(filepath.Join(dirPath, f.Name()))
+		if err != nil {
+			return nil, fmt.Errorf("readCsv _path: %s error: %w", filepath.Join(dirPath, f.Name()), err)
+		}
+
+		dfs[name] = csv
+	}
+
+	return dfs, nil
+}
+
+func Periods() ([]string, error) {
+	fs, err := os.ReadDir(_opChipsDirPath)
+	if err != nil {
+		return nil, fmt.Errorf("os.ReadDir error: %w", err)
+	}
+
+	var periods []string
+	for _, f := range fs {
+		periods = append(periods, f.Name())
+	}
+
+	sort.Sort(sort.Reverse(sort.StringSlice(periods)))
+
+	return periods, nil
 }
 
 func readCsv(filePath string) (*dataframe.DataFrame, error) {

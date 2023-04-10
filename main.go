@@ -13,12 +13,11 @@ import (
 func main() {
 	a := app.New()
 	win := a.NewWindow("期權")
-	path := "E:\\我的雲端硬碟\\金融\\data"
-	csv.Init(path)
+	csv.Init("E:\\我的雲端硬碟\\金融\\data")
 
 	now := time.Now()
 
-	win.SetContent(container.New(layout.NewVBoxLayout(), flayout.NewOPLayout(path, now, win)))
+	win.SetContent(container.New(layout.NewVBoxLayout(), flayout.NewOPLayout(now, win)))
 
 	win.Resize(fyne.NewSize(720, 480))
 	win.ShowAndRun()

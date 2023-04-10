@@ -10,15 +10,15 @@ import (
 )
 
 // 下載OP未平倉
-func NewDownLoadOPChipsDatePicker(path string, now time.Time, win fyne.Window) *DatePicker {
+func NewDownLoadOPChipsDatePicker(now time.Time, win fyne.Window) *DatePicker {
 	return NewDatePickerOnSelected(now, win, func(selected time.Time) {
-		f, err := data.DownLoadOPChips(selected, path)
+		f, err := data.DownLoadOPChips(selected)
 		if err != nil {
 			dialog.NewInformation("download", err.Error(), win).Show()
 			return
 		}
 
-		if err := csv.ToChipsCsv(f, path); err != nil {
+		if err := csv.ToChipsCsv(f); err != nil {
 			dialog.NewInformation("download", fmt.Sprintf("save op chips csv error: %w", err.Error()), win).Show()
 			return
 		}

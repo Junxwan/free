@@ -4,20 +4,18 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/Junxwan/free/csv"
-	file "github.com/Junxwan/free/lib"
 	"github.com/go-gota/gota/dataframe"
 	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
 	"os"
-	"path/filepath"
 	"time"
 )
 
 // 下載期交所OP未平倉資料
-func DownLoadOPChips(time time.Time, outPath string) (string, error) {
-	f := filepath.Join(outPath, csv.GetOpRawChipsPathByDay(time))
+func DownLoadOPChips(time time.Time) (string, error) {
+	f := csv.GetOpRawChipsPathByDay(time)
 
-	if !file.IsExist(f) {
+	if !csv.IsExist(f) {
 		body, err := downLoadOPChips(time)
 		if err != nil {
 			return "", fmt.Errorf("downLoadOPChips error: %w", err)
