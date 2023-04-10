@@ -3,6 +3,7 @@ package data
 import (
 	"bytes"
 	"fmt"
+	"github.com/Junxwan/free/csv"
 	file "github.com/Junxwan/free/lib"
 	"github.com/go-gota/gota/dataframe"
 	"golang.org/x/text/encoding/unicode"
@@ -14,7 +15,7 @@ import (
 
 // 下載期交所OP未平倉資料
 func DownLoadOPChips(time time.Time, outPath string) (string, error) {
-	f := filepath.Join(outPath, file.OpRawChipsPathByDay(time))
+	f := filepath.Join(outPath, csv.OpRawChipsPathByDay(time))
 
 	if !file.IsExist(f) {
 		body, err := downLoadOPChips(time)

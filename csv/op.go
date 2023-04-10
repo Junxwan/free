@@ -3,7 +3,6 @@ package csv
 import (
 	"bytes"
 	"fmt"
-	file "github.com/Junxwan/free/lib"
 	"github.com/go-gota/gota/dataframe"
 	"github.com/go-gota/gota/series"
 	"os"
@@ -77,7 +76,7 @@ func ToChipsCsv(filePath, outPath string) error {
 			"P":     series.Int,
 		}))
 
-		dir := filepath.Join(outPath, file.OpChipsDirPath(period))
+		dir := filepath.Join(outPath, OpChipsDirPath(period))
 
 		if err := saveCsv(dir, now, resultDf); err != nil {
 			return fmt.Errorf("saveFile error: %w", err)
