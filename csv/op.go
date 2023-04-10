@@ -13,27 +13,18 @@ import (
 	"time"
 )
 
-type OPRawChipsCsv struct {
-	df *dataframe.DataFrame
-}
-
-func NewOPRawChipsCsv(filePath string) (OPRawChipsCsv, error) {
+func ToChipsCsv(filePath, outPath string) error {
 	df, err := readCsv(filePath)
 	if err != nil {
-		return OPRawChipsCsv{}, fmt.Errorf("read path: %s csv error %w", filePath, err)
+		return fmt.Errorf("read path: %s csv error %w", filePath, err)
 	}
 
-	return OPRawChipsCsv{df: df}, nil
-}
-
-func (o OPRawChipsCsv) ToChipsCsv(outPath string) error {
-	df := o.df.FilterAggregation(
+	records := df.FilterAggregation(
 		dataframe.And,
 		dataframe.F{Colidx: 17, Comparator: series.Eq, Comparando: "一般"},
 		dataframe.F{Colidx: 1, Comparator: series.Eq, Comparando: "TXO"},
-	)
+	).Records()
 
-	records := df.Records()
 	periodMap := make(map[string]map[string][][]string)
 
 	now, err := time.Parse("2006/01/02", records[1][0])
