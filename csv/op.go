@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func ToChipsCsv(filePath, outPath string) error {
+func ToChipsCsv(filePath string) error {
 	df, err := readCsv(filePath)
 	if err != nil {
 		return fmt.Errorf("read path: %s csv error %w", filePath, err)
@@ -84,8 +84,8 @@ func ToChipsCsv(filePath, outPath string) error {
 	return nil
 }
 
-func ReadOPChipsByPeriod(period, path string) (map[string]*dataframe.DataFrame, error) {
-	dirPath := filepath.Join(path, period)
+func ReadOPChipsByPeriod(period string) (map[string]*dataframe.DataFrame, error) {
+	dirPath := GetOpChipsPathByPeriod(period)
 	fs, err := os.ReadDir(dirPath)
 	if err != nil {
 		return nil, fmt.Errorf("os.ReadDir error: %w", err)
