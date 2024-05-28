@@ -1,7 +1,5 @@
 function k(t) {
      // 取得當前日期
-
-
     const dataURL = 'http://127.0.0.1:8080/kline';
         (async () => {
             // Load the dataset
@@ -170,6 +168,8 @@ function k(t) {
                 },
 
                 yAxis: [{
+                    offset: 25,
+                    zIndex: 2 ,
                     height: '70%',
                     crosshair: {
                         snap: false
@@ -197,6 +197,7 @@ function k(t) {
 
                 series: [{
                     type: 'candlestick',
+                    zIndex: 1,
                     id: 'price',
                     name: 'AAPL Stock Price',
                     data: ohlc,
@@ -329,3 +330,62 @@ function k(t) {
             });
         })();
     }
+
+document.addEventListener('DOMContentLoaded', function() {
+    var today = new Date().toISOString().slice(0, 10);
+    document.getElementById('dateInput').value = today;
+
+    var toggleChartCheckbox = document.getElementById('toggleChart');
+
+    // 找到按鈕和日期輸入框
+    var setDefaultDateButton = document.getElementById('setDefaultDateButton');
+    var dateInput = document.getElementById('dateInput');
+
+    // 在按鈕點擊時設置日期輸入框的值為今天的日期
+    setDefaultDateButton.addEventListener('click', function() {
+        var timestamp = new Date(dateInput.value).getTime();
+
+        var is = 0
+        if (toggleChartCheckbox.checked) {
+            is = 1
+        }
+
+        (async () => {
+            const dataDay = await fetch(
+                    'http://127.0.0.1:8080/kline?t=day&end='+timestamp + '&is='+is
+                ).then(response => response.json());
+
+             const dataWeek = await fetch(
+                    'http://127.0.0.1:8080/kline?t=week&end='+timestamp+ '&is='+is
+                ).then(response => response.json());
+
+            const dataMonth = await fetch(
+                'http://127.0.0.1:8080/kline?t=month&end='+timestamp+ '&is='+is
+            ).then(response => response.json());
+
+            updateChart('container_day', dataDay);
+            updateChart('container_week', dataWeek);
+            updateChart('container_month', dataMonth);
+        })();
+    });
+});
+
+function updateChart(chartId, data) {
+    var chart = Highcharts.charts.find(function(chart) {
+        return chart.renderTo.id === chartId;
+    });
+
+    chart.series[0].setData(data);
+    chart.hideLoading();
+}
+
+function afterSetExtremes(e) {
+    const { chart } = e.target;
+    chart.showLoading('Loading data from server...');
+    fetch(`${dataURL}?start=${Math.round(e.min)}&end=${Math.round(e.max)}`)
+        .then(res => res.ok && res.json())
+        .then(data => {
+            chart.series[0].setData(data);
+            chart.hideLoading();
+        }).catch(error => console.error(error.message));
+}

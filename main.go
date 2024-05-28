@@ -44,6 +44,7 @@ func main() {
 		T     string `form:"t"`
 		Start int64  `form:"start"`
 		End   int64  `form:"end"`
+		Is    int64  `form:"is"`
 	}
 
 	router.GET("/kline", func(c *gin.Context) {
@@ -58,17 +59,19 @@ func main() {
 		var min, max int
 
 		d := [][]int64{}
-		if Time.Start > 0 {
-			for i, v := range vv {
-				if min == 0 && Time.Start <= v.D {
-					min = i
-				}
-
-				if min != 0 && Time.End <= v.D {
-					max = i
-					break
-				}
+		if Time.End > 0 {
+			switch Time.T {
+			case "day":
+				d = getDay(Time.End, Time.Is)
+			case "week":
+				d = getWeek(Time.End, Time.Is)
+			case "month":
+				d = getMonth(Time.End, Time.Is)
 			}
+
+			c.JSON(http.StatusOK, d)
+
+			return
 		} else {
 			min = 0
 			max = len(vv)
@@ -156,6 +159,8 @@ func loadDay() {
 
 	vv := data["60"]
 
+	data["day_o"] = []K{}
+
 	for i, v := range vv {
 		// 開始有夜盤
 		if v.S1 >= "2017-5-15" {
@@ -168,6 +173,36 @@ func loadDay() {
 				open = v
 				start = i
 			}
+		}
+
+		if v.S2 == "05:00:00" {
+			t, _ := time.Parse("2006-01-02", vv[i+1].S1)
+
+			k := K{
+				Time: t,
+				S1:   vv[i+1].S1,
+				S2:   v.S2,
+				D:    t.UnixMilli(),
+				O:    open.O,
+				C:    v.C,
+				H:    v.H,
+				L:    v.L,
+			}
+
+			d := vv[start : i+1]
+			for _, v := range d {
+				k.V = k.V + v.V
+
+				if v.H > k.H {
+					k.H = v.H
+				}
+
+				if v.L < k.L {
+					k.L = v.L
+				}
+			}
+
+			data["day_o"] = append(data["day_o"], k)
 		}
 
 		if v.S2 == "13:45:00" {
@@ -286,4 +321,43 @@ func loadMonth() {
 			start = i
 		}
 	}
+}
+
+func getDay(end int64, is int64) [][]int64 {
+	vv := data["day"]
+	d := [][]int64{}
+
+	for _, v := range vv {
+		if v.D <= end {
+			d = append(d, []int64{
+				v.D, v.O, v.H, v.L, v.C, v.V,
+			})
+		}
+	}
+
+	if is == 1 {
+		v := d[len(d)-1]
+		t := time.UnixMilli(v[0])
+		s := t.Format("2006-01-02")
+
+		for _, vv := range data["day_o"] {
+			if vv.S1 == s {
+				d[len(d)-1] = []int64{
+					vv.D, vv.O, vv.H, vv.L, vv.C, vv.V,
+				}
+			}
+		}
+
+		return d
+	}
+
+	return d
+}
+
+func getWeek(end int64, is int64) [][]int64 {
+	return [][]int64{}
+}
+
+func getMonth(end int64, is int64) [][]int64 {
+	return [][]int64{}
 }
