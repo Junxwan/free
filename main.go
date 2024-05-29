@@ -242,21 +242,19 @@ func loadWeek() {
 	var open K
 
 	vv := data["day"]
+	size := len(vv)
+
+	open = vv[0]
 
 	for i, v := range vv {
-		if v.Time.Weekday() == time.Monday {
-			open = v
-			start = i
-		}
-
-		if v.Time.Weekday() == time.Friday {
+		if size > i+1 && !isSameWeek(time.UnixMilli(v.D), time.UnixMilli(vv[i+1].D)) {
 			t, _ := time.Parse("2006-01-02", v.S1)
 
 			k := K{
 				Time: t,
 				S1:   open.S1,
 				S2:   v.S1,
-				D:    t.UnixMilli(),
+				D:    open.D,
 				O:    open.O,
 				C:    v.C,
 				H:    v.H,
@@ -265,8 +263,6 @@ func loadWeek() {
 
 			d := vv[start : i+1]
 			for _, v := range d {
-				//k.V = k.V + v.V
-
 				if v.H > k.H {
 					k.H = v.H
 				}
@@ -277,36 +273,63 @@ func loadWeek() {
 			}
 
 			data["week"] = append(data["week"], k)
+
+			open = vv[i+1]
+			start = i + 1
 		}
 	}
+
+	k := K{
+		Time: open.Time,
+		S1:   open.S1,
+		S2:   vv[size-1].S2,
+		D:    open.D,
+		O:    open.O,
+		C:    vv[size-1].C,
+		H:    open.H,
+		L:    open.L,
+	}
+
+	d := vv[start:]
+	for _, v := range d {
+		if v.H > k.H {
+			k.H = v.H
+		}
+
+		if v.L < k.L {
+			k.L = v.L
+		}
+	}
+
+	data["week"] = append(data["week"], k)
 }
 
 func loadMonth() {
 	var start int
-	last := data["day"][0].S1[:7]
+	var open K
 
 	vv := data["day"]
-	for i, v := range vv {
-		if v.S1[:7] != last {
-			last = v.S1[:7]
+	size := len(vv)
 
+	open = vv[0]
+
+	for i, v := range vv {
+		if size > i+1 && !isSameMonth(time.UnixMilli(v.D), time.UnixMilli(vv[i+1].D)) {
 			t, _ := time.Parse("2006-01-02", v.S1)
 
 			k := K{
 				Time: t,
-				S1:   vv[start].S1,
-				S2:   vv[i-1].S1,
-				D:    t.UnixMilli(),
-				O:    vv[start].O,
-				C:    vv[i-1].C,
+				S1:   open.S1,
+				S2:   v.S1,
+				D:    open.D,
+				O:    open.O,
+				C:    v.C,
 				H:    v.H,
 				L:    v.L,
 			}
 
-			d := vv[start:i]
+			d := vv[start : i+1]
 			for _, v := range d {
-				//k.V = k.V + v.V
-
 				if v.H > k.H {
 					k.H = v.H
 				}
@@ -318,9 +341,34 @@ func loadMonth() {
 
 			data["month"] = append(data["month"], k)
 
-			start = i
+			open = vv[i+1]
+			start = i + 1
 		}
 	}
+
+	k := K{
+		Time: open.Time,
+		S1:   open.S1,
+		S2:   vv[size-1].S2,
+		D:    open.D,
+		O:    open.O,
+		C:    vv[size-1].C,
+		H:    open.H,
+		L:    open.L,
+	}
+
+	d := vv[start:]
+	for _, v := range d {
+		if v.H > k.H {
+			k.H = v.H
+		}
+
+		if v.L < k.L {
+			k.L = v.L
+		}
+	}
+
+	data["month"] = append(data["month"], k)
 }
 
 func getDay(end int64, is int64) [][]int64 {
@@ -360,4 +408,24 @@ func getWeek(end int64, is int64) [][]int64 {
 
 func getMonth(end int64, is int64) [][]int64 {
 	return [][]int64{}
+}
+
+func isSameWeek(date1, date2 time.Time) bool {
+	startOfWeek1 := getStartOfWeek(date1)
+	startOfWeek2 := getStartOfWeek(date2)
+	return startOfWeek1.Equal(startOfWeek2)
+}
+
+func isSameMonth(date1, date2 time.Time) bool {
+	return date1.Year() == date2.Year() && date1.Month() == date2.Month()
+}
+
+func getStartOfWeek(date time.Time) time.Time {
+	weekday := int(date.Weekday())
+	if weekday == 0 {
+		weekday = 7
+	}
+
+	startOfWeek := date.AddDate(0, 0, -weekday+1)
+	return startOfWeek
 }

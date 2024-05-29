@@ -16,6 +16,23 @@
         #container {
             height: 600px;
             min-width: 310px;
+            margin-right: 50px;
+        }
+
+        #container_day {
+            height: 600px;
+            min-width: 310px;
+            margin-right: 50px;
+        }
+
+        #container_week {
+            height: 600px;
+            min-width: 310px;
+        }
+
+        #container_month {
+            height: 600px;
+            min-width: 310px;
         }
 
         .highcharts-menu-item-btn {
@@ -24,6 +41,7 @@
 
         .container {
             display: flex; /* 使用 flex 布局 */
+            margin-right: 50px;
         }
 
         .left-div, .right-div {
@@ -46,22 +64,14 @@
 <script src="./code/modules/accessibility.js"></script>
 <script src="./app.js"></script>
 
-<div class="container">
-    <div class="left-div">
-        <div id="container_5"></div>
-    </div>
-    <div class="right-div">
-        <div id="container_30"></div>
-    </div>
+<div>
+    <input type="date" id="dateInput">
+    <button id="setDefaultDateButton">C</button>
+    <input type="checkbox" id="toggleChart">
 </div>
 
-<div class="container">
-    <div class="left-div">
-        <div id="container_day"></div>
-    </div>
-    <div class="right-div">
-        <div id="container_60"></div>
-    </div>
+<div>
+    <div id="container_day"></div>
 </div>
 
 <div class="container">
@@ -74,9 +84,6 @@
 </div>
 
 <script type="text/javascript">
-    k('5')
-    k('30')
-    k('60')
     k('day')
     k('week')
     k('month')
