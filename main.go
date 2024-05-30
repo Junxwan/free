@@ -104,7 +104,7 @@ func main() {
 func load(t string) {
 	d := make([]K, 0, 10000)
 	y := time.Now().Year()
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 20; i++ {
 		file, err := os.Open(fmt.Sprintf("./data/tfe-tx00-%d-%smin.csv", y-i, t))
 		if err != nil {
 			panic(err)
@@ -403,11 +403,111 @@ func getDay(end int64, is int64) [][]int64 {
 }
 
 func getWeek(end int64, is int64) [][]int64 {
-	return [][]int64{}
+	vv := data["week"]
+	kk := []K{}
+	t := time.UnixMilli(end).Format("2006-01-02")
+
+	for _, v := range vv {
+		if v.S1 <= t {
+			kk = append(kk, v)
+		}
+	}
+
+	endi := len(kk) - 1
+
+	dd := []K{}
+	for _, v := range data["day"] {
+		if vv[endi].S1 <= v.S1 && v.S1 <= t {
+			dd = append(dd, v)
+		}
+	}
+
+	l := len(kk)
+
+	if is == 1 {
+		for _, v := range data["day_o"] {
+			if v.S1 == t {
+				kk[l-1].C = v.C
+			}
+		}
+	} else {
+		kk[l-1].C = dd[len(dd)-1].C
+	}
+
+	kk[l-1].S2 = t
+
+	for _, v := range dd {
+		if v.H > kk[l-1].H {
+			kk[l-1].H = v.H
+		}
+
+		if v.L < kk[l-1].L {
+			kk[l-1].L = v.L
+		}
+	}
+
+	d := [][]int64{}
+	for _, k := range kk {
+		d = append(d, []int64{
+			k.D, k.O, k.H, k.L, k.C, k.V,
+		})
+	}
+
+	return d
 }
 
 func getMonth(end int64, is int64) [][]int64 {
-	return [][]int64{}
+	vv := data["month"]
+	kk := []K{}
+	t := time.UnixMilli(end).Format("2006-01-02")
+
+	for _, v := range vv {
+		if v.S1 <= t {
+			kk = append(kk, v)
+		}
+	}
+
+	endi := len(kk) - 1
+
+	dd := []K{}
+	for _, v := range data["day"] {
+		if vv[endi].S1 <= v.S1 && v.S1 <= t {
+			dd = append(dd, v)
+		}
+	}
+
+	l := len(kk)
+
+	if is == 1 {
+		for _, v := range data["day_o"] {
+			if v.S1 == t {
+				kk[l-1].C = v.C
+			}
+		}
+	} else {
+		kk[l-1].C = dd[len(dd)-1].C
+	}
+
+	kk[l-1].S2 = t
+
+	for _, v := range dd {
+		if v.H > kk[l-1].H {
+			kk[l-1].H = v.H
+		}
+
+		if v.L < kk[l-1].L {
+			kk[l-1].L = v.L
+		}
+	}
+
+	d := [][]int64{}
+	for _, k := range kk {
+		d = append(d, []int64{
+			k.D, k.O, k.H, k.L, k.C, k.V,
+		})
+	}
+
+	return d
 }
 
 func isSameWeek(date1, date2 time.Time) bool {
