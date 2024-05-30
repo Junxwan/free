@@ -33,6 +33,7 @@ func main() {
 	load("30")
 	load("60")
 	loadDay()
+	loadDayO()
 	loadWeek()
 	loadMonth()
 
@@ -154,6 +155,58 @@ func load(t string) {
 }
 
 func loadDay() {
+	d := make([]K, 0, 10000)
+	y := time.Now().Year()
+	for i := 0; i < 15; i++ {
+		file, err := os.Open(fmt.Sprintf("./data/tfe-tx00-%d-day.csv", y-i))
+		if err != nil {
+			panic(err)
+		}
+
+		defer file.Close()
+
+		df := csv.NewReader(file)
+		csvs, err := df.ReadAll()
+		if err != nil {
+			panic(err)
+		}
+
+		for _, v := range csvs {
+			t, err := time.Parse("2006-01-02", v[2])
+			if err != nil {
+				panic(err)
+			}
+
+			o, _ := strconv.ParseInt(v[3], 10, 64)
+			h, _ := strconv.ParseInt(v[4], 10, 64)
+			l, _ := strconv.ParseInt(v[5], 10, 64)
+			c, _ := strconv.ParseInt(v[6], 10, 64)
+			vv, _ := strconv.ParseInt(v[7], 10, 64)
+
+			s := strings.Split(v[2], " ")
+
+			d = append(d, K{
+				Time: t,
+				S1:   s[0],
+				S2:   s[0],
+				D:    t.UnixMilli(),
+				O:    o,
+				H:    h,
+				L:    l,
+				C:    c,
+				V:    vv,
+			})
+		}
+	}
+
+	sort.Slice(d, func(i, j int) bool {
+		return d[i].D < d[j].D
+	})
+
+	data["day"] = d
+}
+
+func loadDayO() {
 	var start int
 	var open K
 
@@ -203,44 +256,6 @@ func loadDay() {
 			}
 
 			data["day_o"] = append(data["day_o"], k)
-		}
-
-		if v.S2 >= "13:30:00" {
-			t, _ := time.Parse("2006-01-02", v.S1)
-
-			if t.Weekday() == time.Wednesday {
-				if v.S2 != "13:30:00" {
-					continue
-				}
-			} else if v.S2 != "13:45:00" {
-				continue
-			}
-
-			k := K{
-				Time: t,
-				S1:   v.S1,
-				S2:   v.S1,
-				D:    t.UnixMilli(),
-				O:    open.O,
-				C:    v.C,
-				H:    v.H,
-				L:    v.L,
-			}
-
-			d := vv[start : i+1]
-			for _, v := range d {
-				k.V = k.V + v.V
-
-				if v.H > k.H {
-					k.H = v.H
-				}
-
-				if v.L < k.L {
-					k.L = v.L
-				}
-			}
-
-			data["day"] = append(data["day"], k)
 		}
 	}
 }
