@@ -331,15 +331,18 @@ function k(t) {
         })();
     }
 
+const dateInput = document.getElementById('dateInput');
+const yesterdayBtn = document.getElementById('yesterdayBtn');
+const tomorrowBtn = document.getElementById('tomorrowBtn');
+
 document.addEventListener('DOMContentLoaded', function() {
     var today = new Date().toISOString().slice(0, 10);
-    document.getElementById('dateInput').value = today;
+    dateInput.value = today;
 
     var toggleChartCheckbox = document.getElementById('toggleChart');
 
     // 找到按鈕和日期輸入框
     var setDefaultDateButton = document.getElementById('setDefaultDateButton');
-    var dateInput = document.getElementById('dateInput');
 
     // 在按鈕點擊時設置日期輸入框的值為今天的日期
     setDefaultDateButton.addEventListener('click', function() {
@@ -389,3 +392,33 @@ function afterSetExtremes(e) {
             chart.hideLoading();
         }).catch(error => console.error(error.message));
 }
+
+
+ // 辅助函数：检查是否为周末
+function isWeekend(date) {
+    const day = date.getDay();
+    return day === 0 || day === 6;
+}
+
+// 获取有效日期（非周末）
+function getValidDate(date, offset) {
+    date.setDate(date.getDate() + offset);
+    while (isWeekend(date)) {
+        date.setDate(date.getDate() + offset);
+    }
+    return date;
+}
+
+// 设置昨天的日期（跳过周末）
+yesterdayBtn.addEventListener('click', () => {
+    let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
+    currentDate = getValidDate(currentDate, -1);
+    dateInput.value = formatDate(currentDate);
+});
+
+// 设置明天的日期（跳过周末）
+tomorrowBtn.addEventListener('click', () => {
+    let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
+    currentDate = getValidDate(currentDate, 1);
+    dateInput.value = formatDate(currentDate);
+});

@@ -104,7 +104,7 @@ func main() {
 func load(t string) {
 	d := make([]K, 0, 10000)
 	y := time.Now().Year()
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 15; i++ {
 		file, err := os.Open(fmt.Sprintf("./data/tfe-tx00-%d-%smin.csv", y-i, t))
 		if err != nil {
 			panic(err)
@@ -205,8 +205,16 @@ func loadDay() {
 			data["day_o"] = append(data["day_o"], k)
 		}
 
-		if v.S2 == "13:45:00" {
+		if v.S2 >= "13:30:00" {
 			t, _ := time.Parse("2006-01-02", v.S1)
+
+			if t.Weekday() == time.Wednesday {
+				if v.S2 != "13:30:00" {
+					continue
+				}
+			} else if v.S2 != "13:45:00" {
+				continue
+			}
 
 			k := K{
 				Time: t,
@@ -374,12 +382,15 @@ func loadMonth() {
 func getDay(end int64, is int64) [][]int64 {
 	vv := data["day"]
 	d := [][]int64{}
+	t := time.UnixMilli(end).Format("2006-01-02")
 
 	for _, v := range vv {
-		if v.D <= end {
+		if v.S1 <= t {
 			d = append(d, []int64{
 				v.D, v.O, v.H, v.L, v.C, v.V,
 			})
+		} else {
+			break
 		}
 	}
 
