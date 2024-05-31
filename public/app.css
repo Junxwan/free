@@ -1,0 +1,64 @@
+:root {
+    --highcharts-neutral-color-3: rgba(0, 0, 0, 0);
+}
+
+#container_day {
+    height: 800px;
+    min-width: 310px;
+    margin-right: 50px;
+}
+
+#container_week {
+    height: 800px;
+    min-width: 310px;
+}
+
+#container_month {
+    height: 800px;
+    min-width: 310px;
+}
+
+#container_60 {
+    height: 800px;
+    min-width: 310px;
+}
+
+#container_30 {
+    height: 800px;
+    min-width: 310px;
+}
+
+#container_5 {
+    height: 800px;
+    min-width: 310px;
+    margin-right: 50px;
+}
+
+.highcharts-menu-item-btn {
+    filter: brightness(2.1);
+}
+
+.container {
+    display: flex; /* 使用 flex 布局 */
+    margin-right: 50px;
+}
+
+.left-div, .right-div {
+    width: 50%; /* 设置每个 div 的宽度为容器的一半 */
+}
+
+.floating-window {
+    position: absolute;
+    width: 300px;
+    height: 10px;
+    background-color: #f0f0f0;
+    padding: 20px;
+    cursor: move; /* 设置鼠标样式为可拖动 */
+    z-index: 1000;
+    top: 50px;
+    right: 350px;
+}
+
+.window-header {
+    margin: 0;
+}

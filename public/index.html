@@ -8,56 +8,7 @@
     <style type="text/css">
         @import url("https://code.highcharts.com/css/stocktools/gui.css");
         @import url("https://code.highcharts.com/css/annotations/popup.css");
-
-        :root {
-            --highcharts-neutral-color-3: rgba(0, 0, 0, 0);
-        }
-
-        #container_day {
-            height: 800px;
-            min-width: 310px;
-            margin-right: 50px;
-        }
-
-        #container_week {
-            height: 800px;
-            min-width: 310px;
-        }
-
-        #container_month {
-            height: 800px;
-            min-width: 310px;
-        }
-
-        #container_60 {
-            height: 800px;
-            min-width: 310px;
-        }
-
-        #container_30 {
-            height: 800px;
-            min-width: 310px;
-        }
-
-        #container_5 {
-            height: 800px;
-            min-width: 310px;
-            margin-right: 50px;
-        }
-
-        .highcharts-menu-item-btn {
-            filter: brightness(2.1);
-        }
-
-        .container {
-            display: flex; /* 使用 flex 布局 */
-            margin-right: 50px;
-        }
-
-        .left-div, .right-div {
-            width: 50%; /* 设置每个 div 的宽度为容器的一半 */
-        }
-
+        @import url("./app.css");
     </style>
 </head>
 <body>
@@ -74,7 +25,7 @@
 <script src="./code/modules/accessibility.js"></script>
 <script src="./app.js?=1"></script>
 
-<div>
+<div class="floating-window" id="floating-window">
     <input type="date" id="dateInput">
     <button id="setDefaultDateButton">查</button>
     <input type="checkbox" id="toggleChart">

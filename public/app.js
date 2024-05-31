@@ -410,6 +410,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
         updateK();
     });
+
+
+    // 获取小视窗元素
+    var windowElement = document.getElementById('floating-window');
+
+    // 记录鼠标按下时鼠标相对小视窗的位置
+    var offsetX, offsetY;
+
+    // 当鼠标按下时触发
+    windowElement.addEventListener('mousedown', function(event) {
+        // 计算鼠标相对小视窗的位置
+        offsetX = event.clientX - windowElement.getBoundingClientRect().left;
+        offsetY = event.clientY - windowElement.getBoundingClientRect().top;
+
+        // 添加鼠标移动事件监听器
+        document.addEventListener('mousemove', onMouseMove);
+    });
+
+    // 当鼠标释放时触发
+    document.addEventListener('mouseup', function() {
+        // 移除鼠标移动事件监听器
+        document.removeEventListener('mousemove', onMouseMove);
+    });
+
+    // 鼠标移动时触发的函数
+    function onMouseMove(event) {
+        // 计算小视窗新的位置
+        var newX = event.clientX - offsetX;
+        var newY = event.clientY - offsetY;
+
+        // 设置小视窗的新位置
+        windowElement.style.left = newX + 'px';
+        windowElement.style.top = newY + 'px';
+    }
 });
 
 function updateChart(t, chartId, data) {
