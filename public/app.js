@@ -378,6 +378,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const title = document.getElementById('dateTitle');
     dateInput.value = today;
 
+    var rightBtn = document.getElementById('right');
     var toggleChartCheckbox = document.getElementById('toggleChart');
 
     // 找到按鈕和日期輸入框
@@ -429,6 +430,18 @@ document.addEventListener('DOMContentLoaded', function() {
         updateK();
     });
 
+    rightBtn.addEventListener('click', () => {
+        const inx = document.getElementById('index');
+        if (inx.value === "1") {
+            moveRight("5", "container_5");
+            moveRight("30", "container_30");
+            moveRight("60", "container_60");
+        } else {
+            moveRight("day", "container_day");
+            moveRight("week", "container_week");
+            moveRight("month", "container_month");
+        }
+    });
 
     // 获取小视窗元素
     var windowElement = document.getElementById('floating-window');
@@ -508,6 +521,25 @@ function updateChart(t, chartId, data) {
     }, true);
 
     chart.hideLoading();
+
+    // 获取图表的数据序列
+    var series = chart.series[0]; // 假设您的 K 线图数据是第一个序列
+
+    // 获取最后一个数据点
+    var lastPoint = series.data[series.data.length - 1];
+
+    // 获取最后一个数据点的时间戳
+    var latestTimestamp = lastPoint.x;
+
+    chart.xAxis[0].setExtremes(null, latestTimestamp);
+
+    setIndex(chart, t);
+}
+
+function moveRight(t, chartId) {
+     var chart = Highcharts.charts.find(function(chart) {
+        return chart.renderTo.id === chartId;
+    });
 
     // 获取图表的数据序列
     var series = chart.series[0]; // 假设您的 K 线图数据是第一个序列
