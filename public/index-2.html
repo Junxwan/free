@@ -13,9 +13,36 @@
             --highcharts-neutral-color-3: rgba(0, 0, 0, 0);
         }
 
-        #container {
-            height: 600px;
+        #container_day {
+            height: 800px;
             min-width: 310px;
+            margin-right: 50px;
+        }
+
+        #container_week {
+            height: 800px;
+            min-width: 310px;
+        }
+
+        #container_month {
+            height: 800px;
+            min-width: 310px;
+        }
+
+        #container_60 {
+            height: 800px;
+            min-width: 310px;
+        }
+
+        #container_30 {
+            height: 800px;
+            min-width: 310px;
+        }
+
+        #container_5 {
+            height: 800px;
+            min-width: 310px;
+            margin-right: 50px;
         }
 
         .highcharts-menu-item-btn {
@@ -24,6 +51,7 @@
 
         .container {
             display: flex; /* 使用 flex 布局 */
+            margin-right: 50px;
         }
 
         .left-div, .right-div {
@@ -44,42 +72,35 @@
 <script src="./code/modules/full-screen.js"></script>
 <script src="./code/modules/stock-tools.js"></script>
 <script src="./code/modules/accessibility.js"></script>
-<script src="./app.js"></script>
+<script src="./app.js?=a"></script>
 
-<div class="container">
-    <div class="left-div">
-        <div id="container_5"></div>
-    </div>
-    <div class="right-div">
-        <div id="container_30"></div>
-    </div>
+<div>
+    <input type="date" id="dateInput">
+    <button id="setDefaultDateButton">C</button>
+    <input type="checkbox" id="toggleChart">
+    <button id="yesterdayBtn">昨天</button>
+    <button id="tomorrowBtn">明天</button>
+</div>
+
+<div>
+    <div id="container_5"></div>
 </div>
 
 <div class="container">
     <div class="left-div">
-        <div id="container_day"></div>
+        <div id="container_30"></div>
     </div>
     <div class="right-div">
         <div id="container_60"></div>
     </div>
 </div>
 
-<div class="container">
-    <div class="left-div">
-        <div id="container_week"></div>
-    </div>
-    <div class="right-div">
-        <div id="container_month"></div>
-    </div>
-</div>
+<input type="hidden" id="index-2" value="1">
 
 <script type="text/javascript">
-    k('5')
-    k('30')
     k('60')
-    k('day')
-    k('week')
-    k('month')
+    k('30')
+    k('5')
 </script>
 </body>
 </html>

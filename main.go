@@ -68,6 +68,11 @@ func main() {
 				d = getWeek(Time.End, Time.Is)
 			case "month":
 				d = getMonth(Time.End, Time.Is)
+			case "5":
+				d = get5M(Time.End, Time.Is)
+			case "30":
+			case "60":
+
 			}
 
 			c.JSON(http.StatusOK, d)
@@ -78,7 +83,7 @@ func main() {
 			max = len(vv)
 			switch Time.T {
 			case "5":
-				min = max - 1200
+				min = max - 2400
 			case "30":
 				min = max - 1200
 			case "60":
@@ -392,6 +397,45 @@ func loadMonth() {
 	}
 
 	data["month"] = append(data["month"], k)
+}
+
+func get5M(end int64, is int64) [][]int64 {
+	vv := data["5"]
+	d := [][]int64{}
+	t := time.UnixMilli(end).Format("2006-01-02")
+
+	e := len(vv)
+
+	for i, v := range vv {
+		if v.S1 == t {
+			if v.S2 == "13:45:00" && is == 0 {
+				e = i
+				break
+			}
+
+			// 夜盤
+			if is == 1 && v.S2 == "05:00:00" {
+				e = i
+				break
+			}
+
+			// 沒有夜盤
+			if t <= "2017-05-15" {
+				if v.S2 == "13:45:00" {
+					e = i
+					break
+				}
+			}
+		}
+	}
+
+	for _, v := range vv[e-2400 : e+1] {
+		d = append(d, []int64{
+			v.D, v.O, v.H, v.L, v.C, v.V,
+		})
+	}
+
+	return d
 }
 
 func getDay(end int64, is int64) [][]int64 {

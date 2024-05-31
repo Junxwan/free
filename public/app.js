@@ -90,11 +90,23 @@ function k(t) {
                         type: 'day',
                         count: 1,
                         text: '1d'
-                    }, {
+                    },{
+                        type: 'day',
+                        count: 2,
+                        text: '2d'
+                   },{
+                          type: 'day',
+                          count: 3,
+                          text: '3d'
+                     }, {
                         type: 'week',
                         count: 1,
                         text: '1w'
-                    }, {
+                    },{
+                                              type: 'week',
+                                              count: 2,
+                                              text: '2w'
+                                          }, {
                         type: 'month',
                         count: 1,
                         text: '1m'
@@ -332,6 +344,34 @@ function k(t) {
                     }
                 }]
             });
+
+
+           switch(t) {
+            case "day":
+                // 3m
+                chart.rangeSelector.clickButton(6, true);
+                break;
+            case "week":
+                // 6m
+                chart.rangeSelector.clickButton(7, true);
+                break;
+            case "month":
+                // 2y
+                chart.rangeSelector.clickButton(9, true);
+                break;
+            case "30":
+                // 1w
+                chart.rangeSelector.clickButton(3, true);
+                break;
+            case "60":
+                // 2w
+                chart.rangeSelector.clickButton(4, true);
+                break;
+            case "5":
+                // 3d
+                chart.rangeSelector.clickButton(2, true);
+                break;
+           }
         })();
     }
 
@@ -378,6 +418,43 @@ function updateChart(chartId, data) {
     });
 
     chart.series[0].setData(data);
+
+    chart.series[1].update({
+        params: {
+            period: 5
+        }
+    }, true);
+
+    chart.series[2].update({
+        params: {
+            period: 10
+        }
+    }, true);
+
+    chart.series[3].update({
+        params: {
+            period: 20
+        }
+    }, true);
+
+    chart.series[4].update({
+        params: {
+            period: 60
+        }
+    }, true);
+
+    chart.series[5].update({
+        params: {
+            period: 120
+        }
+    }, true);
+
+    chart.series[6].update({
+        params: {
+            period: 240
+        }
+    }, true);
+
     chart.hideLoading();
 }
 
@@ -418,6 +495,7 @@ function formatDate(date) {
 function updateK(){
     const dateInput = document.getElementById('dateInput');
     const toggleChartCheckbox = document.getElementById('toggleChart');
+    const inx = document.getElementById('index-2');
     var timestamp = new Date(dateInput.value).getTime();
 
     var is = 0
@@ -425,21 +503,41 @@ function updateK(){
         is = 1
     }
 
-    (async () => {
-        const dataDay = await fetch(
+    if (inx.value === "1") {
+        (async () => {
+           const data60 = await fetch(
+                'http://127.0.0.1:8080/kline?t=60&end='+timestamp+ '&is='+is
+            ).then(response => response.json());
+
+            const data30 = await fetch(
+                'http://127.0.0.1:8080/kline?t=30&end='+timestamp+ '&is='+is
+            ).then(response => response.json());
+
+            const data5 = await fetch(
+                'http://127.0.0.1:8080/kline?t=5&end='+timestamp+ '&is='+is
+            ).then(response => response.json());
+
+            updateChart('container_60', data60);
+            updateChart('container_30', data30);
+            updateChart('container_5', data5);
+        })();
+    } else {
+        (async () => {
+            const dataDay = await fetch(
                 'http://127.0.0.1:8080/kline?t=day&end='+timestamp + '&is='+is
             ).then(response => response.json());
 
-         const dataWeek = await fetch(
+            const dataWeek = await fetch(
                 'http://127.0.0.1:8080/kline?t=week&end='+timestamp+ '&is='+is
             ).then(response => response.json());
 
-        const dataMonth = await fetch(
-            'http://127.0.0.1:8080/kline?t=month&end='+timestamp+ '&is='+is
-        ).then(response => response.json());
+            const dataMonth = await fetch(
+                'http://127.0.0.1:8080/kline?t=month&end='+timestamp+ '&is='+is
+            ).then(response => response.json());
 
-        updateChart('container_day', dataDay);
-        updateChart('container_week', dataWeek);
-        updateChart('container_month', dataMonth);
-    })();
+            updateChart('container_day', dataDay);
+            updateChart('container_week', dataWeek);
+            updateChart('container_month', dataMonth);
+        })();
+    }
 }
