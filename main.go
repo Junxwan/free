@@ -68,11 +68,8 @@ func main() {
 				d = getWeek(Time.End, Time.Is)
 			case "month":
 				d = getMonth(Time.End, Time.Is)
-			case "5":
-				d = get5M(Time.End, Time.Is)
-			case "30":
-			case "60":
-
+			case "5", "30", "60":
+				d = getM(Time.T, Time.End, Time.Is)
 			}
 
 			c.JSON(http.StatusOK, d)
@@ -399,8 +396,8 @@ func loadMonth() {
 	data["month"] = append(data["month"], k)
 }
 
-func get5M(end int64, is int64) [][]int64 {
-	vv := data["5"]
+func getM(name string, end int64, is int64) [][]int64 {
+	vv := data[name]
 	d := [][]int64{}
 	t := time.UnixMilli(end).Format("2006-01-02")
 
@@ -429,7 +426,12 @@ func get5M(end int64, is int64) [][]int64 {
 		}
 	}
 
-	for _, v := range vv[e-2400 : e+1] {
+	s := 2400
+	if t != "5" {
+		s = 1200
+	}
+
+	for _, v := range vv[e-s : e+1] {
 		d = append(d, []int64{
 			v.D, v.O, v.H, v.L, v.C, v.V,
 		})

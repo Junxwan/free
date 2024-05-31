@@ -98,7 +98,11 @@ function k(t) {
                           type: 'day',
                           count: 3,
                           text: '3d'
-                     }, {
+                     },{
+                                                 type: 'day',
+                                                 count: 5,
+                                                 text: '5d'
+                                            }, {
                         type: 'week',
                         count: 1,
                         text: '1w'
@@ -349,23 +353,23 @@ function k(t) {
            switch(t) {
             case "day":
                 // 3m
-                chart.rangeSelector.clickButton(6, true);
+                chart.rangeSelector.clickButton(7, true);
                 break;
             case "week":
                 // 6m
-                chart.rangeSelector.clickButton(7, true);
+                chart.rangeSelector.clickButton(8, true);
                 break;
             case "month":
                 // 2y
-                chart.rangeSelector.clickButton(9, true);
+                chart.rangeSelector.clickButton(10, true);
                 break;
             case "30":
-                // 1w
+                // 5d
                 chart.rangeSelector.clickButton(3, true);
                 break;
             case "60":
                 // 2w
-                chart.rangeSelector.clickButton(4, true);
+                chart.rangeSelector.clickButton(5, true);
                 break;
             case "5":
                 // 3d
