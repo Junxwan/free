@@ -337,6 +337,7 @@ const tomorrowBtn = document.getElementById('tomorrowBtn');
 
 document.addEventListener('DOMContentLoaded', function() {
     var today = new Date().toISOString().slice(0, 10);
+    const dateInput = document.getElementById('dateInput');
     dateInput.value = today;
 
     var toggleChartCheckbox = document.getElementById('toggleChart');
@@ -410,15 +411,15 @@ function getValidDate(date, offset) {
 }
 
 // 设置昨天的日期（跳过周末）
-yesterdayBtn.addEventListener('click', () => {
-    let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
-    currentDate = getValidDate(currentDate, -1);
-    dateInput.value = formatDate(currentDate);
-});
-
-// 设置明天的日期（跳过周末）
-tomorrowBtn.addEventListener('click', () => {
-    let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
-    currentDate = getValidDate(currentDate, 1);
-    dateInput.value = formatDate(currentDate);
-});
+//yesterdayBtn.addEventListener('click', () => {
+//    let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
+//    currentDate = getValidDate(currentDate, -1);
+//    dateInput.value = formatDate(currentDate);
+//});
+//
+//// 设置明天的日期（跳过周末）
+//tomorrowBtn.addEventListener('click', () => {
+//    let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
+//    currentDate = getValidDate(currentDate, 1);
+//    dateInput.value = formatDate(currentDate);
+//});
