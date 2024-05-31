@@ -346,6 +346,24 @@ function k(t) {
                             }
                         }
                     }
+                },
+                {
+                    type: 'bb',
+                    id: 'bollingerBands',
+                    linkedTo: 'price',
+                    yAxis: 0,
+                    lineWidth: 0.5,
+                    color: '#0a932f',
+                    bottomLine: {
+                      styles: {
+                        lineColor: "gray",
+                      },
+                    },
+                    topLine: {
+                      styles: {
+                        lineColor: "gray",
+                      },
+                    },
                 }]
             });
 
