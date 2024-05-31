@@ -98,7 +98,11 @@ function k(t) {
                         type: 'month',
                         count: 1,
                         text: '1m'
-                    },{
+                    }, {
+                                              type: 'month',
+                                              count: 3,
+                                              text: '3m'
+                                          },{
                         type: 'month',
                          count: 6,
                         text: '6m'
@@ -331,10 +335,6 @@ function k(t) {
         })();
     }
 
-const dateInput = document.getElementById('dateInput');
-const yesterdayBtn = document.getElementById('yesterdayBtn');
-const tomorrowBtn = document.getElementById('tomorrowBtn');
-
 document.addEventListener('DOMContentLoaded', function() {
     var today = new Date().toISOString().slice(0, 10);
     const dateInput = document.getElementById('dateInput');
@@ -347,30 +347,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 在按鈕點擊時設置日期輸入框的值為今天的日期
     setDefaultDateButton.addEventListener('click', function() {
-        var timestamp = new Date(dateInput.value).getTime();
+        updateK();
+    });
 
-        var is = 0
-        if (toggleChartCheckbox.checked) {
-            is = 1
-        }
+    const yesterdayBtn = document.getElementById('yesterdayBtn');
+    const tomorrowBtn = document.getElementById('tomorrowBtn');
 
-        (async () => {
-            const dataDay = await fetch(
-                    'http://127.0.0.1:8080/kline?t=day&end='+timestamp + '&is='+is
-                ).then(response => response.json());
+    // 设置昨天的日期（跳过周末）
+    yesterdayBtn.addEventListener('click', () => {
+        let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
+        currentDate = getValidDate(currentDate, -1);
+        dateInput.value = formatDate(currentDate);
 
-             const dataWeek = await fetch(
-                    'http://127.0.0.1:8080/kline?t=week&end='+timestamp+ '&is='+is
-                ).then(response => response.json());
+        updateK();
+    });
 
-            const dataMonth = await fetch(
-                'http://127.0.0.1:8080/kline?t=month&end='+timestamp+ '&is='+is
-            ).then(response => response.json());
+    // 设置明天的日期（跳过周末）
+    tomorrowBtn.addEventListener('click', () => {
+        let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
+        currentDate = getValidDate(currentDate, 1);
+        dateInput.value = formatDate(currentDate);
 
-            updateChart('container_day', dataDay);
-            updateChart('container_week', dataWeek);
-            updateChart('container_month', dataMonth);
-        })();
+        updateK();
     });
 });
 
@@ -410,16 +408,38 @@ function getValidDate(date, offset) {
     return date;
 }
 
-// 设置昨天的日期（跳过周末）
-//yesterdayBtn.addEventListener('click', () => {
-//    let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
-//    currentDate = getValidDate(currentDate, -1);
-//    dateInput.value = formatDate(currentDate);
-//});
-//
-//// 设置明天的日期（跳过周末）
-//tomorrowBtn.addEventListener('click', () => {
-//    let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
-//    currentDate = getValidDate(currentDate, 1);
-//    dateInput.value = formatDate(currentDate);
-//});
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function updateK(){
+    const dateInput = document.getElementById('dateInput');
+    const toggleChartCheckbox = document.getElementById('toggleChart');
+    var timestamp = new Date(dateInput.value).getTime();
+
+    var is = 0
+    if (toggleChartCheckbox.checked) {
+        is = 1
+    }
+
+    (async () => {
+        const dataDay = await fetch(
+                'http://127.0.0.1:8080/kline?t=day&end='+timestamp + '&is='+is
+            ).then(response => response.json());
+
+         const dataWeek = await fetch(
+                'http://127.0.0.1:8080/kline?t=week&end='+timestamp+ '&is='+is
+            ).then(response => response.json());
+
+        const dataMonth = await fetch(
+            'http://127.0.0.1:8080/kline?t=month&end='+timestamp+ '&is='+is
+        ).then(response => response.json());
+
+        updateChart('container_day', dataDay);
+        updateChart('container_week', dataWeek);
+        updateChart('container_month', dataMonth);
+    })();
+}
