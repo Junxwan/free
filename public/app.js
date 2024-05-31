@@ -350,38 +350,14 @@ function k(t) {
             });
 
 
-           switch(t) {
-            case "day":
-                // 3m
-                chart.rangeSelector.clickButton(7, true);
-                break;
-            case "week":
-                // 6m
-                chart.rangeSelector.clickButton(8, true);
-                break;
-            case "month":
-                // 2y
-                chart.rangeSelector.clickButton(10, true);
-                break;
-            case "30":
-                // 5d
-                chart.rangeSelector.clickButton(3, true);
-                break;
-            case "60":
-                // 2w
-                chart.rangeSelector.clickButton(5, true);
-                break;
-            case "5":
-                // 3d
-                chart.rangeSelector.clickButton(2, true);
-                break;
-           }
+           setIndex(chart, t);
         })();
     }
 
 document.addEventListener('DOMContentLoaded', function() {
     var today = new Date().toISOString().slice(0, 10);
     const dateInput = document.getElementById('dateInput');
+    const title = document.getElementById('dateTitle');
     dateInput.value = today;
 
     var toggleChartCheckbox = document.getElementById('toggleChart');
@@ -399,24 +375,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 设置昨天的日期（跳过周末）
     yesterdayBtn.addEventListener('click', () => {
-        let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
-        currentDate = getValidDate(currentDate, -1);
-        dateInput.value = formatDate(currentDate);
+        if (toggleChartCheckbox.checked) {
+            let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
+            currentDate = getValidDate(currentDate, -1);
+            dateInput.value = formatDate(currentDate);
+
+            toggleChartCheckbox.checked = false;
+
+            title.textContent = dateInput.value + " 日盤";
+        } else {
+            toggleChartCheckbox.checked = true;
+
+            title.textContent = dateInput.value + " 夜盤";
+        }
 
         updateK();
     });
 
     // 设置明天的日期（跳过周末）
     tomorrowBtn.addEventListener('click', () => {
-        let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
-        currentDate = getValidDate(currentDate, 1);
-        dateInput.value = formatDate(currentDate);
+        if (toggleChartCheckbox.checked) {
+            toggleChartCheckbox.checked = false;
+
+            title.textContent = dateInput.value + " 日盤";
+        } else {
+            let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
+            currentDate = getValidDate(currentDate, 1);
+            dateInput.value = formatDate(currentDate);
+
+            toggleChartCheckbox.checked = true;
+
+            title.textContent = formatDate(currentDate) + " 夜盤";
+        }
 
         updateK();
     });
 });
 
-function updateChart(chartId, data) {
+function updateChart(t, chartId, data) {
     var chart = Highcharts.charts.find(function(chart) {
         return chart.renderTo.id === chartId;
     });
@@ -460,6 +456,48 @@ function updateChart(chartId, data) {
     }, true);
 
     chart.hideLoading();
+
+    // 获取图表的数据序列
+    var series = chart.series[0]; // 假设您的 K 线图数据是第一个序列
+
+    // 获取最后一个数据点
+    var lastPoint = series.data[series.data.length - 1];
+
+    // 获取最后一个数据点的时间戳
+    var latestTimestamp = lastPoint.x;
+
+    chart.xAxis[0].setExtremes(null, latestTimestamp);
+
+    setIndex(chart, t);
+}
+
+function setIndex(chart, t) {
+    switch(t) {
+        case "day":
+            // 3m
+            chart.rangeSelector.clickButton(7, true);
+            break;
+        case "week":
+            // 6m
+            chart.rangeSelector.clickButton(8, true);
+            break;
+        case "month":
+            // 2y
+            chart.rangeSelector.clickButton(10, true);
+            break;
+        case "30":
+            // 5d
+            chart.rangeSelector.clickButton(3, true);
+            break;
+        case "60":
+            // 2w
+            chart.rangeSelector.clickButton(5, true);
+            break;
+        case "5":
+            // 3d
+            chart.rangeSelector.clickButton(2, true);
+            break;
+   }
 }
 
 function afterSetExtremes(e) {
@@ -472,7 +510,6 @@ function afterSetExtremes(e) {
             chart.hideLoading();
         }).catch(error => console.error(error.message));
 }
-
 
  // 辅助函数：检查是否为周末
 function isWeekend(date) {
@@ -499,7 +536,7 @@ function formatDate(date) {
 function updateK(){
     const dateInput = document.getElementById('dateInput');
     const toggleChartCheckbox = document.getElementById('toggleChart');
-    const inx = document.getElementById('index-2');
+    const inx = document.getElementById('index');
     var timestamp = new Date(dateInput.value).getTime();
 
     var is = 0
@@ -521,9 +558,9 @@ function updateK(){
                 'http://127.0.0.1:8080/kline?t=5&end='+timestamp+ '&is='+is
             ).then(response => response.json());
 
-            updateChart('container_60', data60);
-            updateChart('container_30', data30);
-            updateChart('container_5', data5);
+            updateChart("60",'container_60', data60);
+            updateChart("30",'container_30', data30);
+            updateChart("5",'container_5', data5);
         })();
     } else {
         (async () => {
@@ -539,9 +576,9 @@ function updateK(){
                 'http://127.0.0.1:8080/kline?t=month&end='+timestamp+ '&is='+is
             ).then(response => response.json());
 
-            updateChart('container_day', dataDay);
-            updateChart('container_week', dataWeek);
-            updateChart('container_month', dataMonth);
+            updateChart("day",'container_day', dataDay);
+            updateChart("week",'container_week', dataWeek);
+            updateChart("month",'container_month', dataMonth);
         })();
     }
 }

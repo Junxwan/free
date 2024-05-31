@@ -72,14 +72,15 @@
 <script src="./code/modules/full-screen.js"></script>
 <script src="./code/modules/stock-tools.js"></script>
 <script src="./code/modules/accessibility.js"></script>
-<script src="./app.js?=a"></script>
+<script src="./app.js?=1"></script>
 
 <div>
     <input type="date" id="dateInput">
-    <button id="setDefaultDateButton">C</button>
+    <button id="setDefaultDateButton">查</button>
     <input type="checkbox" id="toggleChart">
     <button id="yesterdayBtn">昨天</button>
     <button id="tomorrowBtn">明天</button>
+    <p id="dateTitle"></p>
 </div>
 
 <div>
@@ -95,10 +96,14 @@
     </div>
 </div>
 
+<input type="hidden" id="index" value="0">
+
 <script type="text/javascript">
     k('day')
     k('week')
     k('month')
+
+
 </script>
 </body>
 </html>
