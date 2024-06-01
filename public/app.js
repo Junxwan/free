@@ -392,6 +392,10 @@ document.addEventListener('DOMContentLoaded', function() {
             title.textContent = dateInput.value + " 夜盤 " + dayNames[(new Date(dateInput.value)).getDay()];
         } else {
             title.textContent = dateInput.value + " 日盤 " + dayNames[(new Date(dateInput.value)).getDay()];
+
+            if (isThirdWednesdayOfMonth(Date(dateInput.value))) {
+                title.textContent += " 月結算"
+            }
         }
 
         updateK();
@@ -409,11 +413,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
             toggleChartCheckbox.checked = false;
 
-            title.textContent = dateInput.value + " 夜盤 " + dayNames[(new Date(dateInput.value)).getDay()];
+            title.textContent = dateInput.value + " 日盤 " + dayNames[(new Date(dateInput.value)).getDay()];
+
+             if (isThirdWednesdayOfMonth(Date(dateInput.value))) {
+                title.textContent += " 月結算"
+            }
         } else {
             toggleChartCheckbox.checked = true;
 
-            title.textContent = dateInput.value + " 日盤 " + dayNames[(new Date(dateInput.value)).getDay()];
+            title.textContent = dateInput.value + " 夜盤 " + dayNames[(new Date(dateInput.value)).getDay()];
         }
 
         updateK();
@@ -424,7 +432,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (toggleChartCheckbox.checked) {
             toggleChartCheckbox.checked = false;
 
-            title.textContent = dateInput.value + " 夜盤 " + dayNames[(new Date(dateInput.value)).getDay()];
+            title.textContent = dateInput.value + " 日盤 " + dayNames[(new Date(dateInput.value)).getDay()];
         } else {
             let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
             currentDate = getValidDate(currentDate, 1);
@@ -432,7 +440,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             toggleChartCheckbox.checked = true;
 
-            title.textContent = formatDate(currentDate) + " 日盤 " + dayNames[(new Date(dateInput.value)).getDay()];
+            title.textContent = formatDate(currentDate) + " 夜盤 " + dayNames[(new Date(dateInput.value)).getDay()];
         }
 
         updateK();
@@ -691,3 +699,30 @@ function getDateExcludingWeekends() {
     return date;
 }
 
+function isThirdWednesdayOfMonth(date) {
+    // 確保輸入的日期有效
+    if (!(date instanceof Date && !isNaN(date))) {
+        return false;
+    }
+
+    // 獲取日期的年份和月份
+    let year = date.getFullYear();
+    let month = date.getMonth();
+
+    // 設置日期為該月的第一天
+    let firstDayOfMonth = new Date(year, month, 1);
+
+    // 獲取第一天是星期幾
+    let firstDayOfWeek = firstDayOfMonth.getDay();
+
+    // 獲取第一個周三的日期
+    let firstWednesdayDate = new Date(firstDayOfMonth);
+    firstWednesdayDate.setDate(firstWednesdayDate.getDate() + (3 - firstDayOfWeek + 7) % 7);
+
+    // 獲取第三周的周三的日期
+    let thirdWednesdayDate = new Date(firstWednesdayDate);
+    thirdWednesdayDate.setDate(thirdWednesdayDate.getDate() + 14);
+
+    // 判斷輸入的日期是否為第三周的周三
+    return date.getDate() === thirdWednesdayDate.getDate();
+}
