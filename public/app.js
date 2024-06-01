@@ -373,10 +373,12 @@ function k(t) {
     }
 
 document.addEventListener('DOMContentLoaded', function() {
-    var today = new Date().toISOString().slice(0, 10);
     const dateInput = document.getElementById('dateInput');
     const title = document.getElementById('dateTitle');
-    dateInput.value = today;
+
+    dateInput.value = getDateExcludingWeekends().toISOString().slice(0, 10);
+
+    const dayNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 
     var rightBtn = document.getElementById('right');
     var toggleChartCheckbox = document.getElementById('toggleChart');
@@ -386,6 +388,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 在按鈕點擊時設置日期輸入框的值為今天的日期
     setDefaultDateButton.addEventListener('click', function() {
+        if (toggleChartCheckbox.checked) {
+            title.textContent = dateInput.value + " 夜盤 " + dayNames[(new Date(dateInput.value)).getDay()];
+        } else {
+            title.textContent = dateInput.value + " 日盤 " + dayNames[(new Date(dateInput.value)).getDay()];
+        }
+
         updateK();
     });
 
@@ -401,11 +409,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             toggleChartCheckbox.checked = false;
 
-            title.textContent = dateInput.value + " 日盤";
+            title.textContent = dateInput.value + " 夜盤 " + dayNames[(new Date(dateInput.value)).getDay()];
         } else {
             toggleChartCheckbox.checked = true;
 
-            title.textContent = dateInput.value + " 夜盤";
+            title.textContent = dateInput.value + " 日盤 " + dayNames[(new Date(dateInput.value)).getDay()];
         }
 
         updateK();
@@ -416,7 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (toggleChartCheckbox.checked) {
             toggleChartCheckbox.checked = false;
 
-            title.textContent = dateInput.value + " 日盤";
+            title.textContent = dateInput.value + " 夜盤 " + dayNames[(new Date(dateInput.value)).getDay()];
         } else {
             let currentDate = dateInput.value ? new Date(dateInput.value) : new Date();
             currentDate = getValidDate(currentDate, 1);
@@ -424,7 +432,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             toggleChartCheckbox.checked = true;
 
-            title.textContent = formatDate(currentDate) + " 夜盤";
+            title.textContent = formatDate(currentDate) + " 日盤 " + dayNames[(new Date(dateInput.value)).getDay()];
         }
 
         updateK();
@@ -666,3 +674,20 @@ function updateK(){
         })();
     }
 }
+
+function getDateExcludingWeekends() {
+    let date = new Date();
+    let dayNumber = date.getDay();
+
+    // 如果輸入的日期是星期六（6），則加兩天，變成星期一
+    if (dayNumber === 6) {
+        date.setDate(date.getDate() - 1);
+    }
+    // 如果輸入的日期是星期日（0），則加一天，變成星期一
+    else if (dayNumber === 0) {
+        date.setDate(date.getDate() - 2);
+    }
+
+    return date;
+}
+
