@@ -749,7 +749,7 @@ function rect() {
         var firstPath = element.querySelector('path:first-of-type');
         if (firstPath) {
             firstPath.setAttribute('fill', 'rgba(0, 0, 0, 0)');
-            firstPath.setAttribute('stroke-width', '5');
+            firstPath.setAttribute('stroke-width', '1');
         }
 
         // 在当前元素下查找第二个 path 元素，并更改其填充颜色
