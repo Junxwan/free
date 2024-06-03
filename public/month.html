@@ -8,7 +8,7 @@
     <style type="text/css">
         @import url("https://code.highcharts.com/css/stocktools/gui.css");
         @import url("https://code.highcharts.com/css/annotations/popup.css");
-        @import url("./app.css");
+        @import url("./app.css?=5");
     </style>
 </head>
 <body>
@@ -24,7 +24,9 @@
 <script src="./code/modules/full-screen.js"></script>
 <script src="./code/modules/stock-tools.js"></script>
 <script src="./code/modules/accessibility.js"></script>
-<script src="./app.js?=1"></script>
+<script src="./code/modules/heikinashi.js"></script>
+<script src="./code/modules/hollowcandlestick.js"></script>
+<script src="./app.js?=7"></script>
 
 <div class="floating-window" id="floating-window">
     <input type="date" id="dateInput">
@@ -36,9 +38,9 @@
     <p id="dateTitle"></p>
 </div>
 
-<div>
-    <div id="container_month"></div>
-</div>
+<figure class="highcharts-figure">
+    <div id="container_month" class="chart highcharts-dark"></div>
+</figure>
 
 <input type="hidden" id="index" value="m">
 

@@ -1,381 +1,377 @@
 function k(t) {
-     // 取得當前日期
+    // 取得當前日期
     const dataURL = 'http://127.0.0.1:8080/kline';
-        (async () => {
-            // Load the dataset
-            const data = await fetch(
-                'http://127.0.0.1:8080/kline?t=' + t
-            ).then(response => response.json());
+    (async () => {
+        // Load the dataset
+        const data = await fetch(
+            'http://127.0.0.1:8080/kline?t=' + t
+        ).then(response => response.json());
 
-            // split the data set into ohlc and volume
-            const ohlc = [],
-                volume = [],
-                dataLength = data.length;
+        // split the data set into ohlc and volume
+        const ohlc = [],
+            volume = [],
+            dataLength = data.length;
 
-            let previousCandleClose = 0;
-            for (let i = 0; i < dataLength; i++) {
-                ohlc.push([
-                    data[i][0], // the date
-                    data[i][1], // open
-                    data[i][2], // high
-                    data[i][3], // low
-                    data[i][4] // close
-                ]);
+        let previousCandleClose = 0;
+        for (let i = 0; i < dataLength; i++) {
+            ohlc.push([
+                data[i][0], // the date
+                data[i][1], // open
+                data[i][2], // high
+                data[i][3], // low
+                data[i][4] // close
+            ]);
 
-                volume.push({
-                    x: data[i][0], // the date
-                    y: data[i][5], // the volume
-                    color: data[i][4] > previousCandleClose ? '#466742' : '#a23f43',
-                    labelColor: data[i][4] > previousCandleClose ? '#51a958' : '#ea3d3d'
-                });
-                previousCandleClose = data[i][4];
-            }
-
-            Highcharts.setOptions({
-                chart: {
-                    backgroundColor: '#0a0a0a'
-                },
-                title: {
-                    style: {
-                        color: '#cccccc'
-                    }
-                },
-                xAxis: {
-                    gridLineColor: '#181816',
-                    labels: {
-                        style: {
-                            color: '#9d9da2'
-                        }
-                    }
-                },
-                yAxis: {
-                    gridLineColor: '#181816',
-                    labels: {
-                        style: {
-                            color: '#9d9da2'
-                        }
-                    }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    style: {
-                        color: '#cdcdc9'
-                    }
-                },
-                scrollbar: {
-                    barBackgroundColor: '#464646',
-                    barBorderRadius: 0,
-                    barBorderWidth: 0,
-                    buttonBorderWidth: 0,
-                    buttonArrowColor: '#cccccc',
-                    rifleColor: '#cccccc',
-                    trackBackgroundColor: '#121211',
-                    trackBorderRadius: 0,
-                    trackBorderWidth: 1,
-                    trackBorderColor: '#464646'
-                },
-                exporting: {
-                    enabled: false
-                },
-                lang: {
-                    shortMonths: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
-                    weekdays: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
-                }
+            volume.push({
+                x: data[i][0], // the date
+                y: data[i][5], // the volume
+                color: data[i][4] > previousCandleClose ? '#466742' : '#a23f43',
+                labelColor: data[i][4] > previousCandleClose ? '#51a958' : '#ea3d3d'
             });
+            previousCandleClose = data[i][4];
+        }
 
-           const chart =  Highcharts.stockChart('container_' + t, {
-                rangeSelector: {
-                    enabled: true,
-                    buttons: [{
-                        type: 'day',
-                        count: 1,
-                        text: '1d'
-                    },{
-                        type: 'day',
-                        count: 2,
-                        text: '2d'
-                   },{
-                          type: 'day',
-                          count: 3,
-                          text: '3d'
-                     },{
-                                                 type: 'day',
-                                                 count: 5,
-                                                 text: '5d'
-                                            }, {
-                        type: 'week',
-                        count: 1,
-                        text: '1w'
-                    },{
-                                              type: 'week',
-                                              count: 2,
-                                              text: '2w'
-                                          }, {
-                        type: 'month',
-                        count: 1,
-                        text: '1m'
-                    }, {
-                                              type: 'month',
-                                              count: 3,
-                                              text: '3m'
-                                          },{
-                        type: 'month',
-                         count: 6,
-                        text: '6m'
-                    },{
-                      type: 'year',
-                       count: 1,
-                      text: '1y'
-                  }, {type: 'year',
-                       count: 2,
-                      text: '2y'
-                  },{type: 'year',
-                       count: 3,
-                      text: '3y'
-                  },{type: 'year',
-                       count: 6,
-                      text: '6y'
-                  },{
-                        type: 'all',
-                        text: 'All'
-                    }],
-
-                    inputDateFormat: '%Y-%m-%d',
-                    inputEditDateFormat: '%Y-%m-%d'
-                },
-
-                navigator: {
-                   enabled: true,
-                   adaptToUpdatedData: true
-                },
-                title: {
-                    text: '台指期-' + t
-                },
-
-                plotOptions: {
-                    series: {
-                        point: {
-                            events: {
-                                mouseOver: function () {
-                                    this.series.chart.xAxis[0].drawCrosshair({plotX: this.plotX});
-                                    this.series.chart.yAxis[0].drawCrosshair({plotY: this.plotY});
-                                }
-                            }
-                        },
-                        cursor: 'crosshair',
-                        dataGrouping: {
-                            enabled: false
-                        },
-
-                    },
-                    candlestick: {
-                        color: 'white',
-                        upColor: 'red',
-                        upLineColor: 'red',
-                        lineColor: 'white'
+        Highcharts.setOptions({
+            chart: {
+                backgroundColor: '#0a0a0a'
+            },
+            title: {
+                style: {
+                    color: '#cccccc'
+                }
+            },
+            xAxis: {
+                gridLineColor: '#181816',
+                labels: {
+                    style: {
+                        color: '#9d9da2'
                     }
-                },
-
-                scrollbar: {
-                    enabled: true
-                },
-
-                xAxis: {
-                    minRange: 1,
-                    min: Date.UTC(2015, 0, 1),
-                    max: Date.now(),
-                    gridLineWidth: 1,
-                    crosshair: {
-                        snap: false
+                }
+            },
+            yAxis: {
+                gridLineColor: '#181816',
+                labels: {
+                    style: {
+                        color: '#9d9da2'
                     }
-                },
+                }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                style: {
+                    color: '#cdcdc9'
+                }
+            },
+            scrollbar: {
+                barBackgroundColor: '#464646',
+                barBorderRadius: 0,
+                barBorderWidth: 0,
+                buttonBorderWidth: 0,
+                buttonArrowColor: '#cccccc',
+                rifleColor: '#cccccc',
+                trackBackgroundColor: '#121211',
+                trackBorderRadius: 0,
+                trackBorderWidth: 1,
+                trackBorderColor: '#464646'
+            },
+            exporting: {
+                enabled: false
+            },
+            lang: {
+                shortMonths: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+                weekdays: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+            }
+        });
 
-                yAxis: [{
-                    offset: 25,
-                    zIndex: 2 ,
-                    height: '70%',
-                    crosshair: {
-                        snap: false
-                    },
-                    accessibility: {
-                        description: 'price'
-                    }
+        const chart = Highcharts.stockChart('container_' + t, {
+            rangeSelector: {
+                enabled: true,
+                buttons: [{
+                    type: 'day',
+                    count: 1,
+                    text: '1d'
                 }, {
-                    top: '70%',
-                    height: '30%',
-                    accessibility: {
-                        description: 'volume'
-                    }
+                    type: 'day',
+                    count: 2,
+                    text: '2d'
+                }, {
+                    type: 'day',
+                    count: 3,
+                    text: '3d'
+                }, {
+                    type: 'day',
+                    count: 5,
+                    text: '5d'
+                }, {
+                    type: 'week',
+                    count: 1,
+                    text: '1w'
+                }, {
+                    type: 'week',
+                    count: 2,
+                    text: '2w'
+                }, {
+                    type: 'month',
+                    count: 1,
+                    text: '1m'
+                }, {
+                    type: 'month',
+                    count: 3,
+                    text: '3m'
+                }, {
+                    type: 'month',
+                    count: 6,
+                    text: '6m'
+                }, {
+                    type: 'year',
+                    count: 1,
+                    text: '1y'
+                }, {
+                    type: 'year',
+                    count: 2,
+                    text: '2y'
+                }, {
+                    type: 'year',
+                    count: 3,
+                    text: '3y'
+                }, {
+                    type: 'year',
+                    count: 6,
+                    text: '6y'
+                }, {
+                    type: 'all',
+                    text: 'All'
                 }],
 
+                inputDateFormat: '%Y-%m-%d',
+                inputEditDateFormat: '%Y-%m-%d'
+            },
+
+            navigator: {
+                enabled: true,
+                adaptToUpdatedData: true
+            },
+            title: {
+                text: '台指期-' + t
+            },
+
+            plotOptions: {
+                series: {
+                    point: {
+                        events: {
+                            mouseOver: function () {
+                                this.series.chart.xAxis[0].drawCrosshair({ plotX: this.plotX });
+                                this.series.chart.yAxis[0].drawCrosshair({ plotY: this.plotY });
+                            }
+                        }
+                    },
+                    cursor: 'crosshair',
+                    dataGrouping: {
+                        enabled: false
+                    },
+
+                },
+                candlestick: {
+                    color: 'white',
+                    upColor: 'red',
+                    upLineColor: 'red',
+                    lineColor: 'white'
+                }
+            },
+
+            scrollbar: {
+                enabled: true
+            },
+
+            xAxis: {
+                minRange: 1,
+                min: Date.UTC(2015, 0, 1),
+                max: Date.now(),
+                gridLineWidth: 1,
+                crosshair: {
+                    snap: false
+                }
+            },
+
+            yAxis: [{
+                offset: 25,
+                zIndex: 2,
+                height: '100%',
+                crosshair: {
+                    snap: false
+                },
+                accessibility: {
+                    description: 'price'
+                }
+            }],
+
+            tooltip: {
+                shared: true,
+                split: false,
+                useHTML: true,
+                shadow: false,
+                positioner: function () {
+                    return { x: 80, y: 80 };
+                }
+            },
+
+            series: [{
+                type: 'candlestick',
+                zIndex: 1,
+                id: 'price',
+                name: 'AAPL Stock Price',
+                data: ohlc,
                 tooltip: {
-                    shared: true,
-                    split: false,
-                    useHTML: true,
-                    shadow: false,
-                    positioner: function () {
-                        return {x: 50, y: 10};
-                    }
+                    valueDecimals: 2,
+                    pointFormat: '<b>O</b> <span style="color: {point.color}">' +
+                        '{point.open} </span>' +
+                        '<b>H</b> <span style="color: {point.color}">' +
+                        '{point.high}</span><br/>' +
+                        '<b>L</b> <span style="color: {point.color}">{point.low} ' +
+                        '</span>' +
+                        '<b>C</b> <span style="color: {point.color}">' +
+                        '{point.close}</span><br/>'
+                }
+            }, {
+                type: 'sma',
+                id: '5Ma',
+                name: '5Ma',
+                linkedTo: 'price',
+                zIndex: 1,
+                lineWidth: 0.5,
+                color: '#ff8c00',
+                params: {
+                    period: 5
                 },
-
-                series: [{
-                    type: 'candlestick',
-                    zIndex: 1,
-                    id: 'price',
-                    name: 'AAPL Stock Price',
-                    data: ohlc,
-                    tooltip: {
-                        valueDecimals: 2,
-                        pointFormat: '<b>O</b> <span style="color: {point.color}">' +
-                            '{point.open} </span>' +
-                            '<b>H</b> <span style="color: {point.color}">' +
-                            '{point.high}</span><br/>' +
-                            '<b>L</b> <span style="color: {point.color}">{point.low} ' +
-                            '</span>' +
-                            '<b>C</b> <span style="color: {point.color}">' +
-                            '{point.close}</span><br/>'
-                    }
-                }, {
-                    type: 'sma',
-                    id: '5Ma',
-                    name: '5Ma',
-                    linkedTo: 'price',
-                    zIndex: 1,
-                    lineWidth: 0.5,
-                    color: '#ff8c00',
-                    params: {
-                        period: 5
-                    },
-                    marker: {
-                        enabled: false,
-                        states: {
-                            hover: {
-                                enabled: false,
-                            }
+                marker: {
+                    enabled: false,
+                    states: {
+                        hover: {
+                            enabled: false,
                         }
                     }
-                }, {
-                    type: 'sma',
-                    id: '10Ma',
-                    name: '10Ma',
-                    linkedTo: 'price',
-                    zIndex: 1,
-                    lineWidth: 0.5,
-                    color: '#00ffff',
-                    params: {
-                        period: 10
-                    },
-                    marker: {
-                        enabled: false,
-                        states: {
-                            hover: {
-                                enabled: false,
-                            }
-                        }
-                    }
-                }, {
-                    type: 'sma',
-                    id: '20Ma',
-                    name: '20Ma',
-                    linkedTo: 'price',
-                    zIndex: 1,
-                    lineWidth: 0.5,
-                    color: '#0a932f',
-                    params: {
-                        period: 20
-                    },
-                    marker: {
-                        enabled: false,
-                        states: {
-                            hover: {
-                                enabled: false,
-                            }
-                        }
-                    }
-                }, {
-                    type: 'sma',
-                    id: '60Ma',
-                    name: '60Ma',
-                    linkedTo: 'price',
-                    zIndex: 1,
-                    lineWidth: 0.5,
-                    color: '#d4b40f',
-                    params: {
-                        period: 60
-                    },
-                    marker: {
-                        enabled: false,
-                        states: {
-                            hover: {
-                                enabled: false,
-                            }
-                        }
-                    }
-                }, {
-                    type: 'sma',
-                    id: '120Ma',
-                    name: '120Ma',
-                    linkedTo: 'price',
-                    zIndex: 1,
-                    lineWidth: 0.5,
-                    color: '#d40f33',
-                    params: {
-                        period: 120
-                    },
-                    marker: {
-                        enabled: false,
-                        states: {
-                            hover: {
-                                enabled: false,
-                            }
-                        }
-                    }
-                }, {
-                    type: 'sma',
-                    id: '240Ma',
-                    name: '240Ma',
-                    linkedTo: 'price',
-                    zIndex: 1,
-                    lineWidth: 0.5,
-                    color: '#720fd4',
-                    params: {
-                        period: 240
-                    },
-                    marker: {
-                        enabled: false,
-                        states: {
-                            hover: {
-                                enabled: false,
-                            }
-                        }
-                    }
+                }
+            }, {
+                type: 'sma',
+                id: '10Ma',
+                name: '10Ma',
+                linkedTo: 'price',
+                zIndex: 1,
+                lineWidth: 0.5,
+                color: '#00ffff',
+                params: {
+                    period: 10
                 },
-                {
-                    type: 'bb',
-                    id: 'bollingerBands',
-                    linkedTo: 'price',
-                    yAxis: 0,
-                    lineWidth: 0.5,
-                    color: '#0a932f',
-                    bottomLine: {
-                      styles: {
+                marker: {
+                    enabled: false,
+                    states: {
+                        hover: {
+                            enabled: false,
+                        }
+                    }
+                }
+            }, {
+                type: 'sma',
+                id: '20Ma',
+                name: '20Ma',
+                linkedTo: 'price',
+                zIndex: 1,
+                lineWidth: 0.5,
+                color: '#0a932f',
+                params: {
+                    period: 20
+                },
+                marker: {
+                    enabled: false,
+                    states: {
+                        hover: {
+                            enabled: false,
+                        }
+                    }
+                }
+            }, {
+                type: 'sma',
+                id: '60Ma',
+                name: '60Ma',
+                linkedTo: 'price',
+                zIndex: 1,
+                lineWidth: 0.5,
+                color: '#d4b40f',
+                params: {
+                    period: 60
+                },
+                marker: {
+                    enabled: false,
+                    states: {
+                        hover: {
+                            enabled: false,
+                        }
+                    }
+                }
+            }, {
+                type: 'sma',
+                id: '120Ma',
+                name: '120Ma',
+                linkedTo: 'price',
+                zIndex: 1,
+                lineWidth: 0.5,
+                color: '#d40f33',
+                params: {
+                    period: 120
+                },
+                marker: {
+                    enabled: false,
+                    states: {
+                        hover: {
+                            enabled: false,
+                        }
+                    }
+                }
+            }, {
+                type: 'sma',
+                id: '240Ma',
+                name: '240Ma',
+                linkedTo: 'price',
+                zIndex: 1,
+                lineWidth: 0.5,
+                color: '#720fd4',
+                params: {
+                    period: 240
+                },
+                marker: {
+                    enabled: false,
+                    states: {
+                        hover: {
+                            enabled: false,
+                        }
+                    }
+                }
+            },
+            {
+                type: 'bb',
+                id: 'bollingerBands',
+                linkedTo: 'price',
+                yAxis: 0,
+                lineWidth: 0.5,
+                color: '#0a932f',
+                bottomLine: {
+                    styles: {
                         lineColor: "gray",
-                      },
                     },
-                    topLine: {
-                      styles: {
+                },
+                topLine: {
+                    styles: {
                         lineColor: "gray",
-                      },
                     },
-                }]
-            });
+                },
+            }],
+        });
 
+        setIndex(chart, t);
+    })();
+}
 
-           setIndex(chart, t);
-        })();
-    }
-
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const dateInput = document.getElementById('dateInput');
     const title = document.getElementById('dateTitle');
 
@@ -390,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var setDefaultDateButton = document.getElementById('setDefaultDateButton');
 
     // 在按鈕點擊時設置日期輸入框的值為今天的日期
-    setDefaultDateButton.addEventListener('click', function() {
+    setDefaultDateButton.addEventListener('click', function () {
         if (toggleChartCheckbox.checked) {
             title.textContent = dateInput.value + " 夜盤 " + dayNames[(new Date(dateInput.value)).getDay()];
         } else {
@@ -418,7 +414,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             title.textContent = dateInput.value + " 日盤 " + dayNames[(new Date(dateInput.value)).getDay()];
 
-             if (isThirdWednesdayOfMonth(Date(dateInput.value))) {
+            if (isThirdWednesdayOfMonth(Date(dateInput.value))) {
                 title.textContent += " 月結算"
             }
         } else {
@@ -469,7 +465,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var offsetX, offsetY;
 
     // 当鼠标按下时触发
-    windowElement.addEventListener('mousedown', function(event) {
+    windowElement.addEventListener('mousedown', function (event) {
         // 计算鼠标相对小视窗的位置
         offsetX = event.clientX - windowElement.getBoundingClientRect().left;
         offsetY = event.clientY - windowElement.getBoundingClientRect().top;
@@ -479,7 +475,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // 当鼠标释放时触发
-    document.addEventListener('mouseup', function() {
+    document.addEventListener('mouseup', function () {
         // 移除鼠标移动事件监听器
         document.removeEventListener('mousemove', onMouseMove);
     });
@@ -497,7 +493,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function updateChart(t, chartId, data) {
-    var chart = Highcharts.charts.find(function(chart) {
+    var chart = Highcharts.charts.find(function (chart) {
         return chart.renderTo.id === chartId;
     });
 
@@ -556,7 +552,7 @@ function updateChart(t, chartId, data) {
 }
 
 function moveRight(t, chartId) {
-     var chart = Highcharts.charts.find(function(chart) {
+    var chart = Highcharts.charts.find(function (chart) {
         return chart.renderTo.id === chartId;
     });
 
@@ -575,7 +571,7 @@ function moveRight(t, chartId) {
 }
 
 function setIndex(chart, t) {
-    switch(t) {
+    switch (t) {
         case "day":
             // 3m
             chart.rangeSelector.clickButton(7, true);
@@ -600,7 +596,7 @@ function setIndex(chart, t) {
             // 3d
             chart.rangeSelector.clickButton(2, true);
             break;
-   }
+    }
 }
 
 function afterSetExtremes(e) {
@@ -614,7 +610,7 @@ function afterSetExtremes(e) {
         }).catch(error => console.error(error.message));
 }
 
- // 辅助函数：检查是否为周末
+// 辅助函数：检查是否为周末
 function isWeekend(date) {
     const day = date.getDay();
     return day === 0 || day === 6;
@@ -636,7 +632,7 @@ function formatDate(date) {
     return `${year}-${month}-${day}`;
 }
 
-function updateK(){
+function updateK() {
     const dateInput = document.getElementById('dateInput');
     const toggleChartCheckbox = document.getElementById('toggleChart');
     const inx = document.getElementById('index');
@@ -649,53 +645,53 @@ function updateK(){
 
     if (inx.value === "1") {
         (async () => {
-           const data60 = await fetch(
-                'http://127.0.0.1:8080/kline?t=60&end='+timestamp+ '&is='+is
+            const data60 = await fetch(
+                'http://127.0.0.1:8080/kline?t=60&end=' + timestamp + '&is=' + is
             ).then(response => response.json());
 
             const data30 = await fetch(
-                'http://127.0.0.1:8080/kline?t=30&end='+timestamp+ '&is='+is
+                'http://127.0.0.1:8080/kline?t=30&end=' + timestamp + '&is=' + is
             ).then(response => response.json());
 
             const data5 = await fetch(
-                'http://127.0.0.1:8080/kline?t=5&end='+timestamp+ '&is='+is
+                'http://127.0.0.1:8080/kline?t=5&end=' + timestamp + '&is=' + is
             ).then(response => response.json());
 
-            updateChart("60",'container_60', data60);
-            updateChart("30",'container_30', data30);
-            updateChart("5",'container_5', data5);
+            updateChart("60", 'container_60', data60);
+            updateChart("30", 'container_30', data30);
+            updateChart("5", 'container_5', data5);
         })();
     }
 
     if (inx.value === "0") {
         (async () => {
-                const dataDay = await fetch(
-                    'http://127.0.0.1:8080/kline?t=day&end='+timestamp + '&is='+is
-                ).then(response => response.json());
+            const dataDay = await fetch(
+                'http://127.0.0.1:8080/kline?t=day&end=' + timestamp + '&is=' + is
+            ).then(response => response.json());
 
-                const dataWeek = await fetch(
-                    'http://127.0.0.1:8080/kline?t=week&end='+timestamp+ '&is='+is
-                ).then(response => response.json());
+            const dataWeek = await fetch(
+                'http://127.0.0.1:8080/kline?t=week&end=' + timestamp + '&is=' + is
+            ).then(response => response.json());
 
-                const dataMonth = await fetch(
-                    'http://127.0.0.1:8080/kline?t=month&end='+timestamp+ '&is='+is
-                ).then(response => response.json());
+            const dataMonth = await fetch(
+                'http://127.0.0.1:8080/kline?t=month&end=' + timestamp + '&is=' + is
+            ).then(response => response.json());
 
-                updateChart("day",'container_day', dataDay);
-                updateChart("week",'container_week', dataWeek);
-                updateChart("month",'container_month', dataMonth);
-            })();
+            updateChart("day", 'container_day', dataDay);
+            updateChart("week", 'container_week', dataWeek);
+            updateChart("month", 'container_month', dataMonth);
+        })();
     }
 
     if (inx.value === "m") {
         (async () => {
             const dataMonth = await fetch(
-                    'http://127.0.0.1:8080/kline?t=month&end='+timestamp+ '&is='+is
-                ).then(response => response.json());
+                'http://127.0.0.1:8080/kline?t=month&end=' + timestamp + '&is=' + is
+            ).then(response => response.json());
 
-                updateChart("month",'container_month', dataMonth);
-            })();
-        }
+            updateChart("month", 'container_month', dataMonth);
+        })();
+    }
 }
 
 function getDateExcludingWeekends() {
@@ -740,4 +736,23 @@ function isThirdWednesdayOfMonth(date) {
 
     // 判斷輸入的日期是否為第三周的周三
     return date.getDate() === thirdWednesdayDate.getDate();
+}
+
+function rect() {
+    var annotationShapes = document.querySelectorAll('.highcharts-annotation-shapes');
+
+    // 遍历每个具有 highcharts-annotation-shapes 类的元素
+    annotationShapes.forEach(function (element) {
+        // 在当前元素下查找第一个 path 元素，并更改其填充颜色
+        var firstPath = element.querySelector('path:first-of-type');
+        if (firstPath) {
+            firstPath.setAttribute('fill', 'rgba(128, 0, 128, 100)');
+        }
+
+        // 在当前元素下查找第二个 path 元素，并更改其填充颜色
+        var secondPath = element.querySelector('path:nth-of-type(2)');
+        if (secondPath) {
+            secondPath.setAttribute('fill', 'rgba(0, 0, 0, 0)');
+        }
+    });
 }
