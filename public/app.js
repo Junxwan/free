@@ -134,11 +134,11 @@ function k(t) {
                     type: 'year',
                     count: 3,
                     text: '3y'
-                },{
-                                      type: 'year',
-                                      count: 4,
-                                      text: '4y'
-                                  }, {
+                }, {
+                    type: 'year',
+                    count: 4,
+                    text: '4y'
+                }, {
                     type: 'year',
                     count: 6,
                     text: '6y'
@@ -496,8 +496,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-function updateChart(t, chartId, data) {
-    console.log("updateChart " + t)
+function loadChart(t, chartId, data) {
+    console.log("loadChart " + t)
 
     var chart = Highcharts.charts.find(function (chart) {
         return chart.renderTo.id === chartId;
@@ -541,13 +541,10 @@ function updateChart(t, chartId, data) {
         }
     }, true);
 
-    chart.hideLoading();
+//    chart.hideLoading();
 
     // 获取图表的数据序列
     var series = chart.series[0]; // 假设您的 K 线图数据是第一个序列
-
-   console.log(series.data.length)
-    console.log(series.data)
 
     // 获取最后一个数据点
     var lastPoint = series.data[series.data.length - 1];
@@ -583,7 +580,7 @@ function setIndex(chart, t) {
     switch (t) {
         case "day":
             // 3m
-            chart.rangeSelector.clickButton(7, true);
+            chart.rangeSelector.clickButton(document.getElementById('container_day').getAttribute('data-index'), true);
             break;
         case "week":
             // 6m
@@ -668,9 +665,9 @@ function updateK() {
                 'http://127.0.0.1:8080/kline?t=5&end=' + timestamp + '&is=' + is
             ).then(response => response.json());
 
-            updateChart("60", 'container_60', data60);
-            updateChart("30", 'container_30', data30);
-            updateChart("5", 'container_5', data5);
+            loadChart("60", 'container_60', data60);
+            loadChart("30", 'container_30', data30);
+            loadChart("5", 'container_5', data5);
         })();
     }
 
@@ -688,9 +685,9 @@ function updateK() {
                 'http://127.0.0.1:8080/kline?t=month&end=' + timestamp + '&is=' + is
             ).then(response => response.json());
 
-            updateChart("day", 'container_day', dataDay);
-            updateChart("week", 'container_week', dataWeek);
-            updateChart("month", 'container_month', dataMonth);
+            loadChart("day", 'container_day', dataDay);
+            loadChart("week", 'container_week', dataWeek);
+            loadChart("month", 'container_month', dataMonth);
         })();
     }
 
@@ -700,17 +697,27 @@ function updateK() {
                 'http://127.0.0.1:8080/kline?t=month&end=' + timestamp + '&is=' + is
             ).then(response => response.json());
 
-            updateChart("month", 'container_month', dataMonth);
+            loadChart("month", 'container_month', dataMonth);
         })();
     }
 
-     if (inx.value === "w") {
+    if (inx.value === "w") {
         (async () => {
             const dataWeek = await fetch(
                 'http://127.0.0.1:8080/kline?t=week&end=' + timestamp + '&is=' + is
             ).then(response => response.json());
 
-            updateChart("week", 'container_week', dataWeek);
+            loadChart("week", 'container_week', dataWeek);
+        })();
+    }
+
+    if (inx.value === "d") {
+        (async () => {
+            const dataDay = await fetch(
+                'http://127.0.0.1:8080/kline?t=day&end=' + timestamp + '&is=' + is
+            ).then(response => response.json());
+
+            loadChart("day", 'container_day', dataDay);
         })();
     }
 
@@ -724,8 +731,8 @@ function updateK() {
                 'http://127.0.0.1:8080/kline?t=month&end=' + timestamp + '&is=' + is
             ).then(response => response.json());
 
-            updateChart("week", 'container_week', dataWeek);
-            updateChart("month", 'container_month', dataMonth);
+            loadChart("week", 'container_week', dataWeek);
+            loadChart("month", 'container_month', dataMonth);
         })();
     }
 }

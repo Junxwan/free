@@ -29,6 +29,8 @@ var data map[string][]K
 func main() {
 	data = make(map[string][]K)
 
+	fmt.Println("load ....")
+
 	load("5")
 	load("30")
 	load("60")
@@ -36,6 +38,8 @@ func main() {
 	loadDayO()
 	loadWeek()
 	loadMonth()
+
+	fmt.Println("load end")
 
 	router := gin.New()
 
@@ -86,6 +90,8 @@ func main() {
 			case "60":
 				min = max - 1200
 			case "week":
+				min = max - 300
+			case "day":
 				min = max - 300
 			}
 		}
@@ -469,11 +475,12 @@ func getDay(end int64, is int64) [][]int64 {
 				}
 			}
 		}
-
-		return d
 	}
 
-	return d
+	lastIndex := len(d) - 1
+	startIndex := lastIndex - 300 + 1
+
+	return d[startIndex:]
 }
 
 func getWeek(end int64, is int64) [][]int64 {
