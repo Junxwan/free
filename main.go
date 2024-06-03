@@ -553,18 +553,25 @@ func getMonth(end int64, is int64) [][]int64 {
 	}
 
 	l := len(kk)
-
+	var ok bool
 	if is == 1 {
 		for _, v := range data["day_o"] {
 			if v.S1 == t {
 				kk[l-1].C = v.C
+				ok = true
 			}
 		}
 	} else {
 		kk[l-1].C = dd[len(dd)-1].C
 	}
 
+	if !ok {
+		kk[l-1].C = dd[len(dd)-1].C
+	}
+
 	kk[l-1].S2 = t
+	kk[l-1].L = kk[l-1].H
+	kk[l-1].H = 0
 
 	for _, v := range dd {
 		if v.H > kk[l-1].H {

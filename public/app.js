@@ -132,6 +132,9 @@ function k(t) {
                   },{type: 'year',
                        count: 3,
                       text: '3y'
+                  },{type: 'year',
+                       count: 6,
+                      text: '6y'
                   },{
                         type: 'all',
                         text: 'All'
@@ -583,7 +586,7 @@ function setIndex(chart, t) {
             break;
         case "month":
             // 2y
-            chart.rangeSelector.clickButton(10, true);
+            chart.rangeSelector.clickButton(12, true);
             break;
         case "30":
             // 5d
@@ -662,25 +665,37 @@ function updateK(){
             updateChart("30",'container_30', data30);
             updateChart("5",'container_5', data5);
         })();
-    } else {
-        (async () => {
-            const dataDay = await fetch(
-                'http://127.0.0.1:8080/kline?t=day&end='+timestamp + '&is='+is
-            ).then(response => response.json());
-
-            const dataWeek = await fetch(
-                'http://127.0.0.1:8080/kline?t=week&end='+timestamp+ '&is='+is
-            ).then(response => response.json());
-
-            const dataMonth = await fetch(
-                'http://127.0.0.1:8080/kline?t=month&end='+timestamp+ '&is='+is
-            ).then(response => response.json());
-
-            updateChart("day",'container_day', dataDay);
-            updateChart("week",'container_week', dataWeek);
-            updateChart("month",'container_month', dataMonth);
-        })();
     }
+
+    if (inx.value === "0") {
+        (async () => {
+                const dataDay = await fetch(
+                    'http://127.0.0.1:8080/kline?t=day&end='+timestamp + '&is='+is
+                ).then(response => response.json());
+
+                const dataWeek = await fetch(
+                    'http://127.0.0.1:8080/kline?t=week&end='+timestamp+ '&is='+is
+                ).then(response => response.json());
+
+                const dataMonth = await fetch(
+                    'http://127.0.0.1:8080/kline?t=month&end='+timestamp+ '&is='+is
+                ).then(response => response.json());
+
+                updateChart("day",'container_day', dataDay);
+                updateChart("week",'container_week', dataWeek);
+                updateChart("month",'container_month', dataMonth);
+            })();
+    }
+
+    if (inx.value === "m") {
+        (async () => {
+            const dataMonth = await fetch(
+                    'http://127.0.0.1:8080/kline?t=month&end='+timestamp+ '&is='+is
+                ).then(response => response.json());
+
+                updateChart("month",'container_month', dataMonth);
+            })();
+        }
 }
 
 function getDateExcludingWeekends() {
