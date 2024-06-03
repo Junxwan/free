@@ -633,6 +633,8 @@ function formatDate(date) {
 }
 
 function updateK() {
+    rect();
+
     const dateInput = document.getElementById('dateInput');
     const toggleChartCheckbox = document.getElementById('toggleChart');
     const inx = document.getElementById('index');
@@ -746,13 +748,15 @@ function rect() {
         // 在当前元素下查找第一个 path 元素，并更改其填充颜色
         var firstPath = element.querySelector('path:first-of-type');
         if (firstPath) {
-            firstPath.setAttribute('fill', 'rgba(128, 0, 128, 100)');
+            firstPath.setAttribute('fill', 'rgba(0, 0, 0, 0)');
+            firstPath.setAttribute('stroke-width', '5');
         }
 
         // 在当前元素下查找第二个 path 元素，并更改其填充颜色
         var secondPath = element.querySelector('path:nth-of-type(2)');
         if (secondPath) {
-            secondPath.setAttribute('fill', 'rgba(0, 0, 0, 0)');
+            secondPath.setAttribute('stroke', 'rgba(128, 0, 128, 100)');
+            secondPath.setAttribute('stroke-width', '1');
         }
     });
 }
