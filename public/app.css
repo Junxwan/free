@@ -40,7 +40,6 @@
 
 .container {
     display: flex; /* 使用 flex 布局 */
-    margin-right: 50px;
 }
 
 .left-div, .right-div {

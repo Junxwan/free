@@ -134,7 +134,11 @@ function k(t) {
                     type: 'year',
                     count: 3,
                     text: '3y'
-                }, {
+                },{
+                                      type: 'year',
+                                      count: 4,
+                                      text: '4y'
+                                  }, {
                     type: 'year',
                     count: 6,
                     text: '6y'
@@ -194,7 +198,7 @@ function k(t) {
             },
 
             yAxis: [{
-                offset: 25,
+                offset: 40,
                 zIndex: 2,
                 height: '100%',
                 crosshair: {
@@ -493,6 +497,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function updateChart(t, chartId, data) {
+    console.log("updateChart " + t)
+
     var chart = Highcharts.charts.find(function (chart) {
         return chart.renderTo.id === chartId;
     });
@@ -539,6 +545,9 @@ function updateChart(t, chartId, data) {
 
     // 获取图表的数据序列
     var series = chart.series[0]; // 假设您的 K 线图数据是第一个序列
+
+   console.log(series.data.length)
+    console.log(series.data)
 
     // 获取最后一个数据点
     var lastPoint = series.data[series.data.length - 1];
