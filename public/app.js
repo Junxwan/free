@@ -578,11 +578,11 @@ function setIndex(chart, t) {
             break;
         case "week":
             // 6m
-            chart.rangeSelector.clickButton(8, true);
+            chart.rangeSelector.clickButton(document.getElementById('container_week').getAttribute('data-index'), true);
             break;
         case "month":
             // 2y
-            chart.rangeSelector.clickButton(12, true);
+            chart.rangeSelector.clickButton(document.getElementById('container_month').getAttribute('data-index'), true);
             break;
         case "30":
             // 5d
@@ -691,6 +691,31 @@ function updateK() {
                 'http://127.0.0.1:8080/kline?t=month&end=' + timestamp + '&is=' + is
             ).then(response => response.json());
 
+            updateChart("month", 'container_month', dataMonth);
+        })();
+    }
+
+     if (inx.value === "w") {
+        (async () => {
+            const dataWeek = await fetch(
+                'http://127.0.0.1:8080/kline?t=week&end=' + timestamp + '&is=' + is
+            ).then(response => response.json());
+
+            updateChart("week", 'container_week', dataWeek);
+        })();
+    }
+
+    if (inx.value === "mw") {
+        (async () => {
+            const dataWeek = await fetch(
+                'http://127.0.0.1:8080/kline?t=week&end=' + timestamp + '&is=' + is
+            ).then(response => response.json());
+
+            const dataMonth = await fetch(
+                'http://127.0.0.1:8080/kline?t=month&end=' + timestamp + '&is=' + is
+            ).then(response => response.json());
+
+            updateChart("week", 'container_week', dataWeek);
             updateChart("month", 'container_month', dataMonth);
         })();
     }

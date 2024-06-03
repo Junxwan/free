@@ -82,23 +82,23 @@
 }
 
 .highcharts-point-down {
-    fill: #ff4242;
-    stroke: #ff4242;
+    fill: #ffffff;
+    stroke: #ffffff;
 }
 
 .highcharts-candlestick-series .highcharts-point-down {
+    fill: #ffffff;
+    stroke: #ffffff;
+}
+
+.highcharts-candlestick-series .highcharts-point-up {
     fill: #ff4242;
     stroke: #ff4242;
 }
 
-.highcharts-candlestick-series .highcharts-point-up {
-    fill: #ffffff;
-    stroke: #ffffff;
-}
-
 .highcharts-point-up {
-    fill: #ffffff;
-    stroke: #ffffff;
+    fill: #ff4242;
+    stroke: #ff4242;
 }
 
 .highcharts-crosshair-label text {

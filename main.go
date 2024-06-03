@@ -85,6 +85,8 @@ func main() {
 				min = max - 1200
 			case "60":
 				min = max - 1200
+			case "week":
+				min = max - 300
 			}
 		}
 
@@ -495,41 +497,48 @@ func getWeek(end int64, is int64) [][]int64 {
 	}
 
 	l := len(kk)
-
+	var ok bool
 	if is == 1 {
 		for _, v := range data["day_o"] {
 			if v.S1 == t {
-				dd[len(dd)-1] = v
 				kk[l-1].C = v.C
+				ok = true
 			}
 		}
 	} else {
 		kk[l-1].C = dd[len(dd)-1].C
 	}
 
-	k := kk[l-1]
-	k.L = k.H
-	k.H = 0
+	if !ok {
+		kk[l-1].C = dd[len(dd)-1].C
+	}
+
+	kk[l-1].S2 = t
+	kk[l-1].L = kk[l-1].H
+	kk[l-1].H = 0
+
 	for _, v := range dd {
-		if v.H > k.H {
-			k.H = v.H
+		if v.H > kk[l-1].H {
+			kk[l-1].H = v.H
 		}
 
-		if v.L < k.L {
-			k.L = v.L
+		if v.L < kk[l-1].L {
+			kk[l-1].L = v.L
 		}
 	}
 
-	kk[l-1] = k
-
 	d := [][]int64{}
+
 	for _, k := range kk {
 		d = append(d, []int64{
 			k.D, k.O, k.H, k.L, k.C, k.V,
 		})
 	}
 
-	return d
+	lastIndex := len(d) - 1
+	startIndex := lastIndex - 300 + 1
+
+	return d[startIndex:]
 }
 
 func getMonth(end int64, is int64) [][]int64 {
